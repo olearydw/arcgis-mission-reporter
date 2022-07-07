@@ -1,0 +1,46 @@
+@mixin app-container() {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: var(--background-color);
+  color: var(--text);
+  height: 100%;
+  width: 100%;
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: var(--header-background);
+    color: var(--header-color);
+    width: 100%;
+    font-family: "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+
+  .content-wrapper {
+    display: flex;
+    height: 100%;
+    width: 100%;
+  }
+
+  .content-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    padding: 15px;
+  }
+
+  .navbar-container {
+    display: flex;
+    height: 100%;
+    calcite-action-bar {
+      height: 100%;
+    }
+  }
+}
+
+.app-container {
+  @include app-container();
+}

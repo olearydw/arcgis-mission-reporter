@@ -1,0 +1,8 @@
+{
+  "extends": ["development"],
+  "browserslist": [
+    "last 2 versions",
+    "not ie 11",
+    "not dead"
+  ]
+}

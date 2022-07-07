@@ -1,0 +1,14 @@
+
+# IntelliJ project files
+.idea
+out
+gen
+
+# Node modules
+node_modules/
+
+# project build artifacts
+dist
+
+# test coverage files
+coverage
