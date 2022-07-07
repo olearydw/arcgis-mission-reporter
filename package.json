@@ -1,8 +1,8 @@
 {
-  "name": "webpack-esm",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "arcgis-mission-writer",
+  "version": "0.1.0",
+  "description": "Web app for writing content to an active mission",
+  "main": "index.ts",
   "private": true,
   "sideEffects": [
     "src/assets/styles/*.scss"
@@ -54,7 +54,7 @@
     "webpack-dev-server": "^4.9.2"
   },
   "dependencies": {
-    "@arcgis/core": "^4.24.5",
+    "@arcgis/core": "^4.24.6",
     "@esri/calcite-components": "^1.0.0-beta.83",
     "navigo": "^8.11.1",
     "uuid": "^8.3.2"
