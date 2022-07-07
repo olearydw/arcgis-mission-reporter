@@ -8,3 +8,5 @@ export type FederatedServer = {
   serverRole: string;
   serverFunction: string;
 };
+
+export type ServerFunction="MissionServer"|"VideoServer";
