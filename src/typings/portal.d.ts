@@ -9,4 +9,4 @@ export type FederatedServer = {
   serverFunction: string;
 };
 
-export type ServerFunction="MissionServer"|"VideoServer";
+export type ServerFunction = "MissionServer" | "VideoServer";

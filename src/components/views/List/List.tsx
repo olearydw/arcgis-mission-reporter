@@ -1,6 +1,7 @@
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
+import {MissionServiceInfo} from "../../../typings/mission";
 
 // References the CSS class name set in style.css
 const CSS = {
@@ -20,6 +21,7 @@ class List extends Widget {
 
   postInitialize() {
     //console.log("list post init");
+    this._initComponent();
   }
 
   destroy() {
@@ -29,6 +31,9 @@ class List extends Widget {
   //--------------------------------------------------------------------
   //  Properties
   //--------------------------------------------------------------------
+
+  @property()
+  activeMission: MissionServiceInfo;
 
   @property()
   title: string;
@@ -49,5 +54,9 @@ class List extends Widget {
   //-------------------------------------------------------------------
   //  Private methods
   //-------------------------------------------------------------------
+
+  private _initComponent = () => {
+
+  }
 }
 export default List;

@@ -1,7 +1,9 @@
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import Accessor from "@arcgis/core/core/Accessor";
 import Portal from "@arcgis/core/portal/Portal";
-import { FederatedServer } from "../typings/portal";
+import {FederatedServer} from "../typings/portal";
+import PortalItem from "@arcgis/core/portal/PortalItem";
+import {MissionServiceInfo} from "../typings/mission";
 
 @subclass("src.model.AppModel")
 class AppModel extends Accessor {
@@ -21,6 +23,17 @@ class AppModel extends Accessor {
   //----------------------------------
   // Public Properties
   //----------------------------------
+
+  @property()
+  get activeMissionInfo(): MissionServiceInfo {
+    return this.activeMissionInfo ?? null;
+  };
+  set activeMissionInfo(info: MissionServiceInfo) {
+    this._set("activeMissionInfo", info);
+  }
+
+  @property()
+  activeMissionItem: PortalItem;
 
   @property()
   federatedServers: FederatedServer[] = [];

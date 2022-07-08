@@ -3,7 +3,7 @@ import PortalUser from "@arcgis/core/portal/PortalUser";
 
 import appModel from "../../model/AppModel";
 import { getFederatedServers } from "../../services/portalService";
-import {FederatedServer, ServerFunction} from "../../typings/portal";
+import { FederatedServer, ServerFunction } from "../../typings/portal";
 
 export async function initPortal(url: string): Promise<Portal> {
   const model = appModel.getInstance();
@@ -43,14 +43,20 @@ export async function initFederatedServers(): Promise<boolean> {
 }
 
 export function getFederatedServer(serverFunction: ServerFunction): FederatedServer | null {
-  const model=appModel.getInstance();
-  const federatedServers: FederatedServer[]=model.federatedServers;
+  const model = appModel.getInstance();
+  const federatedServers: FederatedServer[] = model.federatedServers;
 
-  const foundServer=federatedServers.filter(server => {
-    return server.serverFunction===serverFunction;
+  const foundServer = federatedServers.filter((server) => {
+    return server.serverFunction === serverFunction;
   });
 
   return foundServer?.length ? foundServer[0] : null;
+}
+
+export function getFederatedServerUrl(serverFunction: ServerFunction): string | null {
+  const server = getFederatedServer(serverFunction);
+
+  return server ? server.url : null;
 }
 
 export function getLoggedInUser(): PortalUser | null {

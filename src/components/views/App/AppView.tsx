@@ -165,6 +165,7 @@ class App extends Widget {
       container: div,
       id: "home",
       title: "Active Missions",
+      user: this.user,
     });
   };
 

@@ -41,4 +41,3 @@ export function clone(source: object): object {
   }
   return cloneDeep(source);
 }
-
