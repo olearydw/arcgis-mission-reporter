@@ -17,7 +17,6 @@ import AppView from "./components/views/App/AppView";
 import { initRouter } from "./router/router";
 
 // utilities
-import { clone, getClone, getUuid } from "./utilities/appUtils";
 import { getOauthInfos, getUserCredential, registerOauthInfos } from "./utilities/portal/login";
 import { initFederatedServers, initPortal } from "./utilities/portal/instance";
 
@@ -58,11 +57,6 @@ window.onload = async () => {
 
     // set portal federated servers on app model
     await initFederatedServers();
-
-    console.log("connected portal ::", esriConfig.portalUrl);
-    console.log("session id ::", getUuid());
-    console.log("cloned object ::", getClone());
-    console.log("cloned config ::", clone(appConfig));
 
     await initRouter(app);
   } catch (e) {

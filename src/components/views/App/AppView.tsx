@@ -9,14 +9,15 @@ import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators
 import PortalUser from "@arcgis/core/portal/PortalUser";
 
 // views
-import Home from "../Home/Home";
-import List from "../List/List";
+import Missions from "../Missions/Missions";
+import Reports from "../Reports/Reports";
 import EsriMap from "../Map/Map";
 
 // appview.ui
 import { makeHeader } from "./layout/Header";
 import { makeNavbar } from "./layout/Navbar";
 import { makeSignedInAlert } from "./layout/Alert";
+import { watch } from "@arcgis/core/core/reactiveUtils";
 
 // Styles
 const CSS = {
@@ -42,6 +43,16 @@ class App extends Widget {
 
   postInitialize() {
     // remove if not used
+    watch(
+      () => [this.user],
+      () => {
+        console.log("user change ::", this.user);
+      },
+    );
+
+    this.watch("user", (user) => {
+      console.log("user change ::", user);
+    });
   }
 
   destroy() {
@@ -77,6 +88,8 @@ class App extends Widget {
     const navbar = makeNavbar();
     const welcomeNotice = makeSignedInAlert(this.user);
     const darkTheme = { [CSS.darkTheme]: this.isDarkTheme };
+
+    console.log("app user ::", this.user);
 
     // const n: HTMLCalciteAlertElement = document.createElement("HTMLCalciteAlertElement");
     // n.active = true;
@@ -118,11 +131,11 @@ class App extends Widget {
     const contentDiv = this._getContentContainer();
 
     switch (componentId) {
-      case "home":
-        this.activeComponent = this._getHomeComponent(contentDiv);
+      case "missions":
+        this.activeComponent = this._getMissionsComponent(contentDiv);
         break;
-      case "list":
-        this.activeComponent = this._getListComponent(contentDiv);
+      case "reports":
+        this.activeComponent = this._getReportsComponent(contentDiv);
         break;
       case "map":
         this.activeComponent = this._getMapComponent(contentDiv);
@@ -160,20 +173,20 @@ class App extends Widget {
     return contentNode;
   };
 
-  private _getHomeComponent = (div: HTMLDivElement) => {
-    return new Home({
+  private _getMissionsComponent = (div: HTMLDivElement) => {
+    return new Missions({
       container: div,
-      id: "home",
+      id: "missions",
       title: "Active Missions",
       user: this.user,
     });
   };
 
-  private _getListComponent = (div: HTMLDivElement) => {
-    return new List({
+  private _getReportsComponent = (div: HTMLDivElement) => {
+    return new Reports({
       container: div,
       id: "list",
-      title: "View the Mission Task List",
+      title: "View the Mission Task Reports",
     });
   };
 

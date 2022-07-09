@@ -35,7 +35,6 @@ export async function initFederatedServers(): Promise<boolean> {
 
   try {
     model.federatedServers = await getFederatedServers(serversUrl);
-    console.log("servers ::", model.federatedServers);
     return true;
   } catch (e) {
     return false;

@@ -1,7 +1,7 @@
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
-import {MissionServiceInfo} from "../../../typings/mission";
+import { MissionServiceInfo } from "../../../typings/mission";
 
 // References the CSS class name set in style.css
 const CSS = {
@@ -12,8 +12,8 @@ type ListProperties = {
   title?: string;
 } & __esri.WidgetProperties;
 
-@subclass("esri.widgets.List")
-class List extends Widget {
+@subclass("esri.widgets.Reports")
+class Reports extends Widget {
   // The params are optional
   constructor(params?: ListProperties) {
     super(params);
@@ -43,7 +43,7 @@ class List extends Widget {
   //-------------------------------------------------------------------
 
   render() {
-    const title = this.title ? this.title : "List of portal items goes here...";
+    const title = this.title ? this.title : "Reports of portal items goes here...";
     return (
       <div class={CSS.listContainer}>
         <p>{title}</p>
@@ -55,8 +55,6 @@ class List extends Widget {
   //  Private methods
   //-------------------------------------------------------------------
 
-  private _initComponent = () => {
-
-  }
+  private _initComponent = () => {};
 }
-export default List;
+export default Reports;
