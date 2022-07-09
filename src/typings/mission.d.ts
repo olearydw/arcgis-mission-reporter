@@ -1,5 +1,4 @@
-
-export interface MissionServiceResponse {
+export type MissionServiceResponse = {
   total: number;
   folders: string[];
   num: number;
@@ -8,56 +7,56 @@ export interface MissionServiceResponse {
   services: MissionServiceBase[];
 }
 
-interface MissionServiceBase {
+type MissionServiceBase = {
   name: string;
   title: string;
   type: "MissionServer" | "VideoServer";
 }
 
-export interface MissionServiceInfo {
-  snippet:        string;
-  owner:          string;
-  thumbnail:      string;
-  missionId:      string;
-  capabilities:   string;
-  created:        number;
-  groupId:        string;
-  description:    string;
-  licenseInfo:    string;
-  type:           "MissionServer";
-  title:          string;
+export type MissionServiceInfo = {
+  snippet: string;
+  owner: string;
+  thumbnail: string;
+  missionId: string;
+  capabilities: string;
+  created: number;
+  groupId: string;
+  description: string;
+  licenseInfo: string;
+  type: "MissionServer";
+  title: string;
   currentVersion: string;
-  folderId:       string;
-  tags:           string[];
-  channels:       Channel[];
-  authoringApp:   string;
-  mapIds:         string[];
-  modified:       number;
-  config:         Config;
-  status:         string;
+  folderId: string;
+  tags: string[];
+  channels: Channel[];
+  authoringApp: string;
+  mapIds: string[];
+  modified: number;
+  config: Config;
+  status: string;
 }
 
-interface Channel {
-  name:  string;
+type Channel = {
+  name: string;
   msgId: string;
   items: ChannelItem[];
 }
 
-interface ChannelItem {
-  itemId:     string;
-  layerId:    number;
-  name:       string;
+type ChannelItem = {
+  itemId: string;
+  layerId: number;
+  name: string;
   serviceUrl: string;
 }
 
-interface Config {
-  teams:         Team[];
+type Config = {
+  teams: Team[];
   activeReports: string[];
-  version:       number;
-  dashboards:    string[];
+  version: number;
+  dashboards: string[];
 }
 
-interface Team {
-  id:    string;
+type Team = {
+  id: string;
   title: string;
 }

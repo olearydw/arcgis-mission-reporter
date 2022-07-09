@@ -1,8 +1,0 @@
-/**
- * Module contains utility methods for dealing with URLs
- */
-
-export function removeTrailingSlash(srcStr: string): string {
-  console.log("url utils ::", srcStr);
-  return srcStr.replace(/\/$/, "");
-}

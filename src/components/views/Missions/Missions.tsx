@@ -1,18 +1,27 @@
-import { aliasOf, property, subclass } from "@arcgis/core/core/accessorSupport/decorators";
+// arcgis.core
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
+import Handles from "@arcgis/core/core/Handles";
 
+// arcgis.core.core
+import { aliasOf, property, subclass } from "@arcgis/core/core/accessorSupport/decorators";
+import { watch } from "@arcgis/core/core/reactiveUtils";
+
+// arcgis.core.portal
 import PortalUser from "@arcgis/core/portal/PortalUser";
+
+// components.views.Missions
+import MissionsViewModel from "./MissionsViewModel";
+
+// typings
 import { MissionServiceBase, MissionServiceInfo } from "../../../typings/mission";
 import { getMissionServiceInfo } from "../../../mediators/MissionMediator";
-import MissionsViewModel from "./MissionsViewModel";
-//import * as watchUtils from "@arcgis/core/core/watchUtils";
-
-//import * as watchUtils from "@arcgis/core/core/watchUtils";
+import { setRoute } from "../../../router/router";
 
 // References the CSS class name set in style.css
 const CSS = {
   missionsContainer: "missions-container",
+  cardActionsEnd: "card-actions-end",
 
   leader1: "leader-1",
   trailer1: "trailer-1",
@@ -20,7 +29,6 @@ const CSS = {
 
 type MissionProperties = {
   title?: string;
-  user?: PortalUser;
 } & __esri.WidgetProperties;
 
 @subclass("esri.widgets.App")
@@ -32,46 +40,22 @@ class Missions extends Widget {
   }
 
   async postInitialize() {
-    this.loaded = await this.viewModel.initComponent();
-
-    this.ready = true;
-
-    this.scheduleRender();
-    // this._initWatchers();
-    //
-    // this.watch("activeMissionId", (val) => {
-    //   console.log("classic watcher fired ::", val);
-    // });
-    //
-    // watchUtils.watch(this, "ready", (val) => {
-    //   console.log("ready change ::", this.ready);
-    // });
-    //
-    // reactiveUtils.watch(
-    //   () => this.ready,
-    //   () => {
-    //     console.log("ready callback fired ::");
-    //   },
-    // );
-
-    //this.loaded = await this._initComponent();
-
-    //this.ready = true;
-
-    //this.scheduleRender();
-
-    //this.notifyChange("loaded");
-
-    // reactiveUtils
-    //   .whenOnce(() => this.ready)
-    //   .then((value) => {
-    //     console.log(`component is ready`);
-    //   });
+    // start watchers
+    this._initWatchers();
   }
 
   destroy() {
-    //console.log("home route destroy");
+    if (this._handles) {
+      this._handles.destroy();
+      this._handles = null;
+    }
   }
+
+  //--------------------------------------------------------------------
+  //  Private properties
+  //--------------------------------------------------------------------
+
+  private _handles: Handles = new Handles();
 
   //--------------------------------------------------------------------
   //  Properties
@@ -89,13 +73,8 @@ class Missions extends Widget {
   @aliasOf("viewModel.loaded")
   loaded: boolean;
 
-  // @property()
-  // missionServerInfo: FederatedServer | null;
-
   @aliasOf("viewModel.missionServicesList")
-  get missionServicesList(): MissionServiceBase[] {
-    return this.viewModel.missionServicesList;
-  }
+  missionServicesList: MissionServiceBase[];
 
   @aliasOf("viewModel.ready")
   ready: boolean;
@@ -115,21 +94,19 @@ class Missions extends Widget {
   //-------------------------------------------------------------------
 
   render() {
-    console.log("renderer ::", this.ready);
-
     if (!this.ready) {
       return <div key={"not-ready-div"} />;
     }
 
-    const title = (
-      <p class={this.classes(CSS.leader1, CSS.trailer1)}>{this.title ? this.title : "Missions Page Title"}</p>
-    );
+    const title = <p class={CSS.trailer1}>{this.title ? this.title : "Missions List"}</p>;
     const missionList = this._makeMissionList();
+    const activeMissionElem = this.activeMissionInfo ? this._makeActionMissionElement() : null;
 
     return (
       <div class={CSS.missionsContainer}>
         {title}
         {missionList}
+        {activeMissionElem}
       </div>
     );
   }
@@ -138,56 +115,16 @@ class Missions extends Widget {
   //  Private methods
   //-------------------------------------------------------------------
 
-  // private _initComponent = async (): Promise<boolean> => {
-  //   try {
-  //     // fetch list of all published mission services
-  //     this.missionServicesList = await getAllMissions();
-  //
-  //     //this.activeMissionId = getActiveMission
-  //     this.activeMissionInfo = getActiveMissionInfo();
-  //
-  //     if (this.activeMissionInfo) {
-  //       this.viewModel.activeMissionId = this.activeMissionInfo.missionId;
-  //     }
-  //
-  //     // component is ready
-  //     return true;
-  //   } catch (e) {
-  //     // no missions available
-  //     return false;
-  //   }
-  // };
-
-  // private _initWatchers = () => {
-  //   console.log("start watchers", this);
-  //
-  //   reactiveUtils.watch(
-  //     // getValue function
-  //     () => this.ready,
-  //     // callback
-  //     (val) => {
-  //       console.log("ready ::", val);
-  //     },
-  //   );
-  //
-  //   reactiveUtils.watch(
-  //     () => this.loaded,
-  //     (val) => {
-  //       console.log("loaded change ::", this.loaded, val);
-  //     },
-  //   );
-  //
-  //   reactiveUtils.watch(
-  //     () => this.activeMissionId,
-  //     () => {
-  //       console.log(`Active Mission Changed: ${this.activeMissionId}`);
-  //     },
-  //   );
-  //
-  //   this.watch("activeMissionId", (val) => {
-  //     console.log("classic watcher fired ::", val);
-  //   });
-  // };
+  private _initWatchers = () => {
+    this._handles.add(
+      watch(
+        () => this.activeMissionId,
+        async (missionId) => {
+          this.activeMissionInfo = await getMissionServiceInfo(missionId);
+        },
+      ),
+    );
+  };
 
   private _listItemSelect = (evt: Event) => {
     const elem = evt.target as HTMLCalcitePickListItemElement;
@@ -195,9 +132,6 @@ class Missions extends Widget {
       return;
     }
     this.activeMissionId = elem.value;
-
-    // this should be triggered by watching activeMissionId change
-    this._setMissionDetails(this.activeMissionId);
   };
 
   //--------------------------
@@ -205,12 +139,7 @@ class Missions extends Widget {
   //------------------------
 
   private _makeMissionList = () => {
-    console.log("view ::", this);
-    console.log("vm ::", this.viewModel);
-
-    //console.log("list ::", this.missionServicesList);
-
-    const listItems = this.viewModel.missionServicesList.map((service) => {
+    const listItems = this.missionServicesList.map((service) => {
       const isSelected = service.name === this.activeMissionId;
       const desc = `Mission ID: ${service.name}}`;
       return (
@@ -227,10 +156,53 @@ class Missions extends Widget {
     );
   };
 
-  private async _setMissionDetails(missionId: string) {
-    const missionServiceInfo = await getMissionServiceInfo(missionId);
-    this.activeMissionInfo = missionServiceInfo;
-    this.scheduleRender();
-  }
+  private _makeActionMissionElement = () => {
+    const { created, missionId, thumbnail, snippet, title, modified, owner } = this.activeMissionInfo;
+    const tnUrl = this.viewModel.getThumbnailUrl(missionId, thumbnail);
+    return (
+      <div id="card-container">
+        <calcite-card thumbnail-position="inline-start">
+          <img src={tnUrl} slot="thumbnail" alt=""></img>
+          <div slot="title">{title}</div>
+          <div slot="subtitle">{snippet}</div>
+          <div>Created: {created}</div>
+          <div>Updated: {modified}</div>
+          <div>Mission Owner: {owner}</div>
+          <div class={CSS.cardActionsEnd} slot="footer-trailing">
+            <calcite-button
+              color="inverse"
+              appearance={"outline"}
+              id="card-icon-test-1"
+              icon-end="list"
+              disabled={"true"}
+              data-action={"tasks"}
+              onclick={this._handleAction}
+            >
+              Create a Task
+            </calcite-button>
+            <calcite-button
+              color="neutral"
+              appearance={"outline"}
+              id="card-icon-test-2"
+              icon-end="file-report"
+              data-action={"reports"}
+              onclick={this._handleAction}
+            >
+              Submit a Report
+            </calcite-button>
+          </div>
+        </calcite-card>
+      </div>
+    );
+  };
+
+  private _handleAction = (evt: Event) => {
+    const elem = evt.target as HTMLCalciteActionElement;
+    const action = elem.getAttribute("data-action");
+    console.log("navigate to ::", action);
+    if (action) {
+      setRoute(action);
+    }
+  };
 }
 export default Missions;

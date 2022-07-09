@@ -4,24 +4,27 @@ import PortalUser from "@arcgis/core/portal/PortalUser";
 import { MissionServiceBase, MissionServiceInfo } from "../../../typings/mission";
 import { FederatedServer } from "../../../typings/portal";
 import { getActiveMissionInfo, getAllMissions } from "../../../mediators/MissionMediator";
+import AppModel from "../../../model/AppModel";
+import { getDefaultPortalItemThumbnail, makeItemThumbnailUrl } from "../../../utilities/urlUtils";
+
+// import { makeItemThumbnailUrl } from "../../../utilities/urlUtils.ts";
 
 @subclass("src.components.views.Missions.MissionsViewModel")
 class MissionsViewModel extends Accessor {
-  constructor(properties?: any) {
+  constructor(properties?: unknown) {
     super();
   }
 
   async initialize() {
-    //console.log("initialize vm ::", this);
-    // this.loaded = await this._initComponent();
-    //
-    // console.log("loaded ::", this.loaded);
-    //
-    // this.ready = true;
-    //
-    // this.notifyChange("ready");
-    //console.log("set ready true ::", this.ready);
+    try {
+      await this._initComponent().then(() => {
+        this.loaded = true;
+      });
+    } catch (e) {}
   }
+
+  @property()
+  appModel: AppModel = AppModel.getInstance();
 
   @property()
   activeMissionId = "";
@@ -44,34 +47,34 @@ class MissionsViewModel extends Accessor {
   @property()
   user: PortalUser;
 
-  public initComponent = async (): Promise<boolean> => {
+  public getThumbnailUrl = (id: string, tnPartial: string): string => {
+    if (!tnPartial) {
+      return getDefaultPortalItemThumbnail(this.appModel.portal.url);
+    } else {
+      const contentUrl = tnPartial ? this.appModel.portal.restUrl : this.appModel.portal.url;
+      const tnUrl = makeItemThumbnailUrl(contentUrl, id, tnPartial);
+      const token = this.appModel.userCredential.token;
+      return `${tnUrl}?token=${token}`;
+    }
+  };
+
+  private _initComponent = async (): Promise<void> => {
     try {
       // fetch list of all published mission services
-      //this.missionServicesList = await getAllMissions();
+      this.missionServicesList = await getAllMissions();
 
-      const tmp = await getAllMissions();
-
-      console.log("tmp ::", tmp);
-
-      //this._set("missionServicesList", tmp);
-      this.missionServicesList = tmp;
-      console.log("after set ::", this.missionServicesList);
-
-      this.notifyChange("missionServicesList");
-
-      //this.activeMissionId = getActiveMission
+      // get active mission info
       this.activeMissionInfo = getActiveMissionInfo();
 
+      // set active mission id
       if (this.activeMissionInfo) {
         this.activeMissionId = this.activeMissionInfo.missionId;
       }
 
-      // component is ready
-      return true;
-    } catch (e) {
-      // no missions available
-      return false;
-    }
+      this.loaded = true;
+
+      this.ready = true;
+    } catch (e) {}
   };
 }
 

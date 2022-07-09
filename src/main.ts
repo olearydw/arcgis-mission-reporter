@@ -22,6 +22,7 @@ import { initFederatedServers, initPortal } from "./utilities/portal/instance";
 
 // typings
 import { AppConfig } from "./typings/app";
+import appModel from "./model/AppModel";
 
 // jsapi assets
 esriConfig.assetsPath = "./assets/arcgis";
@@ -40,19 +41,19 @@ window.onload = async () => {
   });
 
   try {
+    // get instance of app model
+    const model = appModel.getInstance();
+
     // handle oauth info
     const authInfos = getOauthInfos(config);
     registerOauthInfos(authInfos);
 
     // get user platform credential
-    await getUserCredential(config);
+    model.userCredential = await getUserCredential(config);
 
     // initial portal, set on app model and destructure user object
     const { url, user } = await initPortal(config.portalUrl);
-
-    // set user info on app
-    app.setUser(user);
-
+    model.loggedInUser = user;
     esriConfig.portalUrl = url;
 
     // set portal federated servers on app model

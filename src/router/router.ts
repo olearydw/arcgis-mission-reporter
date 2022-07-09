@@ -43,6 +43,7 @@ export const initRouter = (app: App): Promise<void> => {
 };
 
 export const setRoute = (route?: string) => {
+  console.log(route);
   if (!route) {
     route = _defaultRoute;
   }

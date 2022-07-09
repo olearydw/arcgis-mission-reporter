@@ -3,7 +3,7 @@ import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
 
 // arcgis.core.core
-import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
+import { subclass, property, aliasOf } from "@arcgis/core/core/accessorSupport/decorators";
 
 // arcgis.core.portal
 import PortalUser from "@arcgis/core/portal/PortalUser";
@@ -12,12 +12,12 @@ import PortalUser from "@arcgis/core/portal/PortalUser";
 import Missions from "../Missions/Missions";
 import Reports from "../Reports/Reports";
 import EsriMap from "../Map/Map";
+import AppModel from "../../../model/AppModel";
 
 // appview.ui
 import { makeHeader } from "./layout/Header";
 import { makeNavbar } from "./layout/Navbar";
 import { makeSignedInAlert } from "./layout/Alert";
-import { watch } from "@arcgis/core/core/reactiveUtils";
 
 // Styles
 const CSS = {
@@ -41,27 +41,12 @@ class App extends Widget {
     super(params);
   }
 
-  postInitialize() {
-    // remove if not used
-    watch(
-      () => [this.user],
-      () => {
-        console.log("user change ::", this.user);
-      },
-    );
-
-    this.watch("user", (user) => {
-      console.log("user change ::", user);
-    });
-  }
-
-  destroy() {
-    //console.log("app view destroy called");
-  }
-
   //--------------------------------------------------------------------
   //  Properties
   //--------------------------------------------------------------------
+
+  @property()
+  appModel: AppModel = AppModel.getInstance();
 
   @property()
   activeComponent: Widget;
@@ -72,7 +57,7 @@ class App extends Widget {
   @property()
   title: string;
 
-  @property()
+  @aliasOf("appModel.loggedInUser")
   user: PortalUser;
 
   //@property()
@@ -88,29 +73,6 @@ class App extends Widget {
     const navbar = makeNavbar();
     const welcomeNotice = makeSignedInAlert(this.user);
     const darkTheme = { [CSS.darkTheme]: this.isDarkTheme };
-
-    console.log("app user ::", this.user);
-
-    // const n: HTMLCalciteAlertElement = document.createElement("HTMLCalciteAlertElement");
-    // n.active = true;
-    // n.autoDismiss = true;
-
-    // const notice = (
-    //   <calcite-alert
-    //     active="true"
-    //     auto-dismiss="true"
-    //     auto-dismiss-duration="medium"
-    //     placement="bottom-end"
-    //     scale="m"
-    //     icon="globe"
-    //   >
-    //     <div slot="title">Alert title</div>
-    //     <div slot="message">Message lorem ipsum</div>
-    //     <a slot="link" href="#">
-    //       Link slot
-    //     </a>
-    //   </calcite-alert>
-    // );
 
     return (
       <div class={this.classes(CSS.appContainer, darkTheme)}>
@@ -146,11 +108,6 @@ class App extends Widget {
     this.activeComponent.render();
   };
 
-  public setUser = (user: PortalUser) => {
-    this.user = user;
-    this.renderNow();
-  };
-
   //-------------------------------------------------------------------
   //  Private methods
   //-------------------------------------------------------------------
@@ -178,7 +135,6 @@ class App extends Widget {
       container: div,
       id: "missions",
       title: "Active Missions",
-      user: this.user,
     });
   };
 
@@ -186,7 +142,7 @@ class App extends Widget {
     return new Reports({
       container: div,
       id: "list",
-      title: "View the Mission Task Reports",
+      title: "Active Mission Reports",
     });
   };
 

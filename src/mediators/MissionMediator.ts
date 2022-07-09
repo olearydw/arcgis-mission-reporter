@@ -1,23 +1,29 @@
-import {getMissionService, getMissionServices} from "../services/missionService";
-import {getFederatedServerUrl} from "../utilities/portal/instance";
-import {MissionServiceBase, MissionServiceInfo, MissionServiceResponse} from "../typings/mission";
+// model
 import AppModel from "../model/AppModel";
 
+// services
+import { getMissionService, getMissionServices } from "../services/missionService";
 
+// typings
+import { MissionServiceBase, MissionServiceInfo, MissionServiceResponse } from "../typings/mission";
+
+// utilities.portal
+import { getFederatedServerUrl } from "../utilities/portal/instance";
+
+/**
+ * Method for fetching mission service list
+ */
 export async function getAllMissions(): Promise<MissionServiceBase[]> {
   const missionServerUrl = getFederatedServerUrl("MissionServer");
 
   if (!missionServerUrl) {
-    return Promise.reject("Mission Server Unavailable")
+    return Promise.reject("Mission Server Unavailable");
   }
 
   try {
     const serviceInfos: MissionServiceResponse = await getMissionServices(missionServerUrl);
-    const servicesList: MissionServiceBase[] = serviceInfos.services;
-    console.log("in mediator ::", servicesList);
-    return servicesList;
+    return serviceInfos.services;
   } catch (e) {
-    console.log("fetch error ::", e);
     return Promise.reject("error fetching ::");
   }
 }
@@ -27,14 +33,12 @@ export async function getMissionServiceInfo(missionId: string): Promise<MissionS
   const missionServerUrl = getFederatedServerUrl("MissionServer");
 
   if (!missionServerUrl) {
-    return Promise.reject("Mission Server Unavailable")
+    return Promise.reject("Mission Server Unavailable");
   }
 
   try {
-    const serviceInfo = await getMissionService(missionServerUrl, missionId);
-    console.log("from wire ::", serviceInfo);
-    appModel.activeMissionInfo = serviceInfo;
-    console.log("from model ::", appModel.activeMissionInfo);
+    const serviceInfo = await getMissionService(missionServerUrl,missionId);
+    appModel.activeMissionInfo = serviceInfo as MissionServiceInfo;
     return appModel.activeMissionInfo;
   } catch (e) {
     return Promise.reject("failed to get service info");
