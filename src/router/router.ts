@@ -7,15 +7,19 @@ const router = new Navigo("/", {
 });
 
 // Default route of the app
-const _defaultRoute = "/home";
+const _defaultRoute = "/missions";
 let _app: App;
 
-router.on("/home", () => {
-  _app.setActiveView("home");
+router.on("/missions", () => {
+  _app.setActiveView("missions");
 });
 
-router.on("/list", () => {
-  _app.setActiveView("list");
+router.on("/reports", () => {
+  _app.setActiveView("reports");
+});
+
+router.on("/tasks", () => {
+  _app.setActiveView("tasks");
 });
 
 router.on("/map", () => {
@@ -23,13 +27,13 @@ router.on("/map", () => {
 });
 
 router.on(() => {
-  setRoute("home");
-  _app.setActiveView("home");
+  setRoute("missions");
+  _app.setActiveView("missions");
 });
 
 router.notFound(() => {
-  setRoute("home");
-  _app.setActiveView("home");
+  setRoute("missions");
+  _app.setActiveView("missions");
 });
 
 export const initRouter = (app: App): Promise<void> => {
@@ -38,7 +42,10 @@ export const initRouter = (app: App): Promise<void> => {
   return Promise.resolve();
 };
 
-export const setRoute = (route: string) => {
+/**
+ * Method to invoke routes from external modules
+ */
+export const setRoute = (route?: string) => {
   if (!route) {
     route = _defaultRoute;
   }

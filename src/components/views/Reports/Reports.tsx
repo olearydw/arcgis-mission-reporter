@@ -1,29 +1,31 @@
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
+import { MissionServiceInfo } from "../../../typings/mission";
 
 // References the CSS class name set in style.css
 const CSS = {
-  homeContainer: "home-container",
+  listContainer: "list-container",
 };
 
-type HomeProperties = {
+type ListProperties = {
   title?: string;
 } & __esri.WidgetProperties;
 
-@subclass("esri.widgets.App")
-class Home extends Widget {
+@subclass("esri.widgets.Reports")
+class Reports extends Widget {
   // The params are optional
-  constructor(params?: HomeProperties) {
+  constructor(params?: ListProperties) {
     super(params);
   }
 
   postInitialize() {
-    //console.log("home route post init");
+    //console.log("list post init");
+    this._initComponent();
   }
 
   destroy() {
-    //console.log("home route destroy");
+    //console.log("list destroy");
   }
 
   //--------------------------------------------------------------------
@@ -31,20 +33,20 @@ class Home extends Widget {
   //--------------------------------------------------------------------
 
   @property()
-  title: string;
+  activeMission: MissionServiceInfo;
 
-  //@property()
-  //@messageBundle("/esm-widget-vite/assets/t9n/widget")
-  //messages: { title: string; };
+  @property()
+  title: string;
 
   //-------------------------------------------------------------------
   //  Public methods
   //-------------------------------------------------------------------
 
   render() {
+    const title = this.title ? this.title : "Reports of portal items goes here...";
     return (
-      <div class={CSS.homeContainer}>
-        <p>{this.title ? this.title : "Home Page Title"}</p>
+      <div class={CSS.listContainer}>
+        <p>{title}</p>
       </div>
     );
   }
@@ -52,5 +54,9 @@ class Home extends Widget {
   //-------------------------------------------------------------------
   //  Private methods
   //-------------------------------------------------------------------
+
+  private _initComponent = () => {
+    console.log("init reports ::", this.activeMission);
+  };
 }
-export default Home;
+export default Reports;

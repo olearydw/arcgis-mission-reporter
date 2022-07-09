@@ -11,7 +11,7 @@ type MapProperties = {
   title?: string;
 } & __esri.WidgetProperties;
 
-@subclass("esri.widgets.List")
+@subclass("esri.widgets.Reports")
 class Map extends Widget {
   // The params are optional
   constructor(params?: MapProperties) {
