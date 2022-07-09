@@ -18,6 +18,7 @@ import AppModel from "../../../model/AppModel";
 import { makeHeader } from "./layout/Header";
 import { makeNavbar } from "./layout/Navbar";
 import { makeSignedInAlert } from "./layout/Alert";
+import Tasks from "../Tasks/Tasks";
 
 // Styles
 const CSS = {
@@ -99,6 +100,9 @@ class App extends Widget {
       case "reports":
         this.activeComponent = this._getReportsComponent(contentDiv);
         break;
+      case "tasks":
+        this.activeComponent = this._getTasksComponent(contentDiv);
+        break;
       case "map":
         this.activeComponent = this._getMapComponent(contentDiv);
         break;
@@ -141,8 +145,16 @@ class App extends Widget {
   private _getReportsComponent = (div: HTMLDivElement) => {
     return new Reports({
       container: div,
-      id: "list",
+      id: "reports",
       title: "Active Mission Reports",
+    });
+  };
+
+  private _getTasksComponent = (div: HTMLDivElement) => {
+    return new Tasks({
+      container: div,
+      id: "tasks",
+      title: "Mission Tasks",
     });
   };
 

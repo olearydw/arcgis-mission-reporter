@@ -1,39 +1,34 @@
 import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
-import { MissionServiceInfo } from "../../../typings/mission";
 
 // References the CSS class name set in style.css
 const CSS = {
-  listContainer: "list-container",
+  tasksContainer: "tasks-container",
 };
 
-type ListProperties = {
+type TasksProperties = {
   title?: string;
 } & __esri.WidgetProperties;
 
-@subclass("esri.widgets.Reports")
-class Reports extends Widget {
+@subclass("src.components.views.Tasks.Tasks")
+class Tasks extends Widget {
   // The params are optional
-  constructor(params?: ListProperties) {
+  constructor(params?: TasksProperties) {
     super(params);
   }
 
   postInitialize() {
-    //console.log("list post init");
-    this._initComponent();
+    // console.log("tasks view post init");
   }
 
   destroy() {
-    //console.log("list destroy");
+    // console.log("tasks view destroy");
   }
 
   //--------------------------------------------------------------------
   //  Properties
   //--------------------------------------------------------------------
-
-  @property()
-  activeMission: MissionServiceInfo;
 
   @property()
   title: string;
@@ -43,9 +38,9 @@ class Reports extends Widget {
   //-------------------------------------------------------------------
 
   render() {
-    const title = this.title ? this.title : "Reports of portal items goes here...";
+    const title = this.title ? this.title : "Mission Tasks";
     return (
-      <div class={CSS.listContainer}>
+      <div key={"tasks-container-key"} class={CSS.tasksContainer}>
         <p>{title}</p>
       </div>
     );
@@ -54,9 +49,5 @@ class Reports extends Widget {
   //-------------------------------------------------------------------
   //  Private methods
   //-------------------------------------------------------------------
-
-  private _initComponent = () => {
-    console.log("init reports ::", this.activeMission);
-  };
 }
-export default Reports;
+export default Tasks;

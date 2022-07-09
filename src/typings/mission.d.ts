@@ -5,13 +5,13 @@ export type MissionServiceResponse = {
   start: number;
   nextStart: number;
   services: MissionServiceBase[];
-}
+};
 
 type MissionServiceBase = {
   name: string;
   title: string;
   type: "MissionServer" | "VideoServer";
-}
+};
 
 export type MissionServiceInfo = {
   snippet: string;
@@ -34,29 +34,29 @@ export type MissionServiceInfo = {
   modified: number;
   config: Config;
   status: string;
-}
+};
 
 type Channel = {
   name: string;
   msgId: string;
   items: ChannelItem[];
-}
+};
 
 type ChannelItem = {
   itemId: string;
   layerId: number;
   name: string;
   serviceUrl: string;
-}
+};
 
 type Config = {
   teams: Team[];
   activeReports: string[];
   version: number;
   dashboards: string[];
-}
+};
 
 type Team = {
   id: string;
   title: string;
-}
+};

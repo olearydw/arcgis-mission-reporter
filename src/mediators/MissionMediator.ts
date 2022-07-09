@@ -37,7 +37,7 @@ export async function getMissionServiceInfo(missionId: string): Promise<MissionS
   }
 
   try {
-    const serviceInfo = await getMissionService(missionServerUrl,missionId);
+    const serviceInfo = await getMissionService(missionServerUrl, missionId);
     appModel.activeMissionInfo = serviceInfo as MissionServiceInfo;
     return appModel.activeMissionInfo;
   } catch (e) {

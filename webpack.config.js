@@ -102,6 +102,7 @@ module.exports = {
       inject: "body",
       title: "Typescript Boilerplate",
       calciteJs: '<script src="./assets/arcgis/calcite/calcite.esm.js" type="module"></script>',
+      jsapiCss: '<link href="assets/arcgis/esri/themes/dark/main.css" rel="stylesheet">',
       filename: "index.html",
       template: "src/index.html",
       favicon: "src/assets/images/favicon.ico",

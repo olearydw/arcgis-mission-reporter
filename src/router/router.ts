@@ -42,8 +42,10 @@ export const initRouter = (app: App): Promise<void> => {
   return Promise.resolve();
 };
 
+/**
+ * Method to invoke routes from external modules
+ */
 export const setRoute = (route?: string) => {
-  console.log(route);
   if (!route) {
     route = _defaultRoute;
   }
