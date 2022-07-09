@@ -3,20 +3,22 @@ import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
 
 // arcgis.core.core
-import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
+import { subclass, property, aliasOf } from "@arcgis/core/core/accessorSupport/decorators";
 
 // arcgis.core.portal
 import PortalUser from "@arcgis/core/portal/PortalUser";
 
 // views
-import Home from "../Home/Home";
-import List from "../List/List";
+import Missions from "../Missions/Missions";
+import Reports from "../Reports/Reports";
 import EsriMap from "../Map/Map";
+import AppModel from "../../../model/AppModel";
 
 // appview.ui
 import { makeHeader } from "./layout/Header";
 import { makeNavbar } from "./layout/Navbar";
 import { makeSignedInAlert } from "./layout/Alert";
+import Tasks from "../Tasks/Tasks";
 
 // Styles
 const CSS = {
@@ -40,17 +42,12 @@ class App extends Widget {
     super(params);
   }
 
-  postInitialize() {
-    // remove if not used
-  }
-
-  destroy() {
-    //console.log("app view destroy called");
-  }
-
   //--------------------------------------------------------------------
   //  Properties
   //--------------------------------------------------------------------
+
+  @property()
+  appModel: AppModel = AppModel.getInstance();
 
   @property()
   activeComponent: Widget;
@@ -61,7 +58,7 @@ class App extends Widget {
   @property()
   title: string;
 
-  @property()
+  @aliasOf("appModel.loggedInUser")
   user: PortalUser;
 
   //@property()
@@ -77,27 +74,6 @@ class App extends Widget {
     const navbar = makeNavbar();
     const welcomeNotice = makeSignedInAlert(this.user);
     const darkTheme = { [CSS.darkTheme]: this.isDarkTheme };
-
-    // const n: HTMLCalciteAlertElement = document.createElement("HTMLCalciteAlertElement");
-    // n.active = true;
-    // n.autoDismiss = true;
-
-    // const notice = (
-    //   <calcite-alert
-    //     active="true"
-    //     auto-dismiss="true"
-    //     auto-dismiss-duration="medium"
-    //     placement="bottom-end"
-    //     scale="m"
-    //     icon="globe"
-    //   >
-    //     <div slot="title">Alert title</div>
-    //     <div slot="message">Message lorem ipsum</div>
-    //     <a slot="link" href="#">
-    //       Link slot
-    //     </a>
-    //   </calcite-alert>
-    // );
 
     return (
       <div class={this.classes(CSS.appContainer, darkTheme)}>
@@ -118,11 +94,14 @@ class App extends Widget {
     const contentDiv = this._getContentContainer();
 
     switch (componentId) {
-      case "home":
-        this.activeComponent = this._getHomeComponent(contentDiv);
+      case "missions":
+        this.activeComponent = this._getMissionsComponent(contentDiv);
         break;
-      case "list":
-        this.activeComponent = this._getListComponent(contentDiv);
+      case "reports":
+        this.activeComponent = this._getReportsComponent(contentDiv);
+        break;
+      case "tasks":
+        this.activeComponent = this._getTasksComponent(contentDiv);
         break;
       case "map":
         this.activeComponent = this._getMapComponent(contentDiv);
@@ -131,11 +110,6 @@ class App extends Widget {
         return;
     }
     this.activeComponent.render();
-  };
-
-  public setUser = (user: PortalUser) => {
-    this.user = user;
-    this.renderNow();
   };
 
   //-------------------------------------------------------------------
@@ -160,19 +134,27 @@ class App extends Widget {
     return contentNode;
   };
 
-  private _getHomeComponent = (div: HTMLDivElement) => {
-    return new Home({
+  private _getMissionsComponent = (div: HTMLDivElement) => {
+    return new Missions({
       container: div,
-      id: "home",
+      id: "missions",
       title: "Active Missions",
     });
   };
 
-  private _getListComponent = (div: HTMLDivElement) => {
-    return new List({
+  private _getReportsComponent = (div: HTMLDivElement) => {
+    return new Reports({
       container: div,
-      id: "list",
-      title: "View the Mission Task List",
+      id: "reports",
+      title: "Active Mission Reports",
+    });
+  };
+
+  private _getTasksComponent = (div: HTMLDivElement) => {
+    return new Tasks({
+      container: div,
+      id: "tasks",
+      title: "Mission Tasks",
     });
   };
 

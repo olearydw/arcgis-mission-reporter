@@ -9,16 +9,28 @@
 body {
   height: 100vh;
   width: 100vw;
-  //background-color: variables.$body-color;
-  //color: var(--text);
   display: flex;
   flex-direction: column;
 }
 
-#viewDiv {
-  padding: 0;
-  margin: 0;
-  height: 100%;
+.leader-1 {
+  margin-top: 0.875rem;
+}
+
+.trailer-1 {
+  margin-bottom: 0.875rem;
+}
+
+.card-actions-end {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
   width: 100%;
-  background: rgba(50, 50, 50);
+  :last-child {
+    margin-left: 1rem;
+  }
+}
+.card-actions-end:last-child {
+  margin-left: 0.5rem;
 }

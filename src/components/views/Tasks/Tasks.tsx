@@ -4,26 +4,26 @@ import Widget from "@arcgis/core/widgets/Widget";
 
 // References the CSS class name set in style.css
 const CSS = {
-  listContainer: "list-container",
+  tasksContainer: "tasks-container",
 };
 
-type ListProperties = {
+type TasksProperties = {
   title?: string;
 } & __esri.WidgetProperties;
 
-@subclass("esri.widgets.List")
-class List extends Widget {
+@subclass("src.components.views.Tasks.Tasks")
+class Tasks extends Widget {
   // The params are optional
-  constructor(params?: ListProperties) {
+  constructor(params?: TasksProperties) {
     super(params);
   }
 
   postInitialize() {
-    //console.log("list post init");
+    // console.log("tasks view post init");
   }
 
   destroy() {
-    //console.log("list destroy");
+    // console.log("tasks view destroy");
   }
 
   //--------------------------------------------------------------------
@@ -38,9 +38,9 @@ class List extends Widget {
   //-------------------------------------------------------------------
 
   render() {
-    const title = this.title ? this.title : "List of portal items goes here...";
+    const title = this.title ? this.title : "Mission Tasks";
     return (
-      <div class={CSS.listContainer}>
+      <div key={"tasks-container-key"} class={CSS.tasksContainer}>
         <p>{title}</p>
       </div>
     );
@@ -50,4 +50,4 @@ class List extends Widget {
   //  Private methods
   //-------------------------------------------------------------------
 }
-export default List;
+export default Tasks;
