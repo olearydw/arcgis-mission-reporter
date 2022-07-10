@@ -14,6 +14,11 @@ import {makeMissionCard} from "./layouts/ReportCard";
 // References the CSS class name set in style.css
 const CSS = {
   reportsContainer: "reports-container",
+  reportsContent: "reports-content",
+  reportItems: "reports-list",
+  reportItemCard: "report-item-card",
+  
+  leader1: "leader-1",
   trailer1: "trailer-1",
 };
 
@@ -88,16 +93,19 @@ class Reports extends Widget {
 
   private _renderReports = () => {
     const reportTiles = this.reportItems.map((item) => {
-      return makeReportItemTile(item);
+      return makeReportItemTile({
+        item: item,
+        handler: this._handleReportClick
+      });
     });
     const activeMissionCard = makeMissionCard(this.activeMissionInfo, this.activeMissionThumbnailUrl);
     return (
-      <div class={"foo bar"}>
-        <h5>There are {this.reportItems.length} active reports available for this mission.</h5>
-        <div class={"report-items"}>
+      <div class={CSS.reportsContent}>
+        <p class={this.classes(CSS.leader1, CSS.trailer1)} >There are {this.reportItems.length} active reports available for this mission.</p>
+        <div class={CSS.reportItems}>
           {reportTiles}
         </div>
-        <div class={"mission-card-reports leader-1 trailer-1"}>
+        <div class={this.classes(CSS.reportItemCard, CSS.leader1, CSS.trailer1)}>
           <p>Selected Mission:</p>
           {activeMissionCard}
         </div>
@@ -109,5 +117,11 @@ class Reports extends Widget {
   private _renderNoReports = () => {
     return <h4>There are no active reports for this mission.</h4>;
   };
+  
+  private _handleReportClick = (evt: Event) => {
+    const elem = evt.target as HTMLCalciteTileElement;
+    const reportId = elem.getAttribute("data-id");
+    console.log("report id ::",reportId);
+  }
 }
 export default Reports;
