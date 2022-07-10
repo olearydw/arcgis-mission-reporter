@@ -36,6 +36,9 @@ class AppModel extends Accessor {
 
   @property()
   activeMissionItem: PortalItem;
+  
+  @property()
+  activeMissionThumbnailUrl: string;
 
   @property()
   userCredential: Credential;
