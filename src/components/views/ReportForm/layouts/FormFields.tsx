@@ -6,7 +6,6 @@ inputTypeMap.set("esriQuestionTypeText", "text");
 inputTypeMap.set("esriQuestionTypeTextArea", "textarea");
 
 export const makeFormElement = (question: MissionReportQuestion) => {
-  console.log("q ::", question);
   const { type } = question;
   let formItem;
   switch (type) {

@@ -7,6 +7,7 @@ import { setRoute } from "../../../router/router";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import { getUuid } from "../../../utilities/appUtils";
 import { sendMissionMessage } from "../../../mediators/MissionMediator";
+import Point from "@arcgis/core/geometry/Point";
 
 const REPORT_STALE_TIME = 2384424000000;
 
@@ -74,10 +75,7 @@ class ReportFormViewModel extends Accessor {
   reportItemId: string;
 
   @property()
-  reportLocX: number;
-
-  @property()
-  reportLocY: number;
+  reportLoc: Point;
 
   @property()
   reportType: string;
@@ -152,8 +150,8 @@ class ReportFormViewModel extends Accessor {
           attributes: attr,
           geometry: {
             spatialReference: { wkid: 4326 },
-            x: this.reportLocX,
-            y: this.reportLocY,
+            x: this.reportLoc.x,
+            y: this.reportLoc.y,
           },
         },
       },

@@ -52,3 +52,9 @@ body {
   width: 100%;
   background: rgba(50, 50, 50);
 }
+
+.form-action-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+}

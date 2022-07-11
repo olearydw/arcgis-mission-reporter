@@ -11,6 +11,7 @@ import MapView from "@arcgis/core/views/MapView";
 import * as webMercatorUtils from "@arcgis/core/geometry/support/webMercatorUtils";
 import Point from "@arcgis/core/geometry/Point";
 import Graphic from "@arcgis/core/Graphic";
+import { setRoute } from "../../../router/router";
 //import { watch } from "@arcgis/core/core/reactiveUtils";
 
 // References the CSS class name set in style.css
@@ -24,22 +25,27 @@ const CSS = {
   fontSmall: "font-size-small",
 };
 
+const markerSymbol = {
+  type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+  color: [226, 119, 40],
+  outline: {
+    color: [255, 255, 255],
+    width: 2,
+  },
+};
+
 type MapProperties = {
   title?: string;
 } & __esri.WidgetProperties;
 
 @subclass("src.components.views.ReportForm.ReportForm")
 class ReportForm extends Widget {
-  // The params are optional
   constructor(params?: MapProperties) {
     super(params);
     this.viewModel = new ReportFormViewModel();
   }
 
   postInitialize() {
-    // console.log("map post init");
-    //console.log("view post init ::", this.title);
-    //console.log("data ::", this.activeMissionReportFormData?.header?.content);
     if (this.activeMissionReportFormData) {
       this.title = this.activeMissionReportFormData?.header?.content;
       this.subtitle = this.activeMissionReportFormData?.subHeader?.content;
@@ -62,23 +68,23 @@ class ReportForm extends Widget {
   @aliasOf("viewModel.activeMissionReportFormData")
   activeMissionReportFormData: MissionReportData;
 
-  @aliasOf("viewModel.reportLocX")
-  reportLocX: number;
-
-  @aliasOf("viewModel.reportLocY")
-  reportLocY: number;
-
   @aliasOf("viewModel.mapId")
   mapId: string;
 
   @aliasOf("viewModel.ready")
   ready: boolean;
 
+  @aliasOf("viewModel.reportLoc")
+  reportLoc: Point;
+
   @aliasOf("viewModel.subTitle")
   subtitle: string;
 
   @aliasOf("viewModel.title")
   title: string;
+
+  @property()
+  view: MapView;
 
   //-------------------------------------------------------------------
   //  Public methods
@@ -92,6 +98,9 @@ class ReportForm extends Widget {
       const formElements = questions.map((question) => {
         return makeFormElement(question);
       });
+
+      const submitEnabled = !!this.reportLoc;
+
       return (
         <div key={"map-container-key"} id={"view"} class={CSS.reportFormContainer}>
           <p class={CSS.trailer1}>{reportType ?? this.title}</p>
@@ -100,9 +109,20 @@ class ReportForm extends Widget {
             <form id="form" onsubmit={this._handleFormSubmit}>
               <fieldset>{formElements}</fieldset>
               <div id={"mapDiv"} class={"report-form-map"} afterCreate={this._startMap} />
-              <calcite-button id="submit" type="submit">
-                Submit
-              </calcite-button>
+              <div class={"form-action-container"}>
+                <calcite-action
+                  text="Cancel"
+                  text-enabled={"true"}
+                  color="neutral"
+                  scale={"s"}
+                  appearance="solid"
+                  icon="arrow-left"
+                  onclick={this._handleCancelAction}
+                ></calcite-action>
+                <calcite-button id="submit" type="submit" scale={"s"} disabled={!submitEnabled}>
+                  Submit
+                </calcite-button>
+              </div>
             </form>
           </div>
         </div>
@@ -119,9 +139,13 @@ class ReportForm extends Widget {
     const formData = new FormData(form);
 
     this.viewModel.processFormData(formData).then((result: boolean) => {
-      console.log("submit result ::", result);
       form.reset();
+      this.view.graphics.removeAll();
     });
+  };
+
+  private _handleCancelAction = () => {
+    setRoute();
   };
 
   private _startMap = async (elem: HTMLDivElement) => {
@@ -131,34 +155,24 @@ class ReportForm extends Widget {
       },
     });
 
-    const view = new MapView({
+    this.view = new MapView({
       container: elem,
       map: webmap,
+      ui: {
+        components: ["zoom"],
+      },
     });
 
     await webmap.when().then(() => {
-      view.on("click", (evt) => {
-        const geoPt: Point = webMercatorUtils.webMercatorToGeographic(evt.mapPoint, false) as Point;
-        this.reportLocX = geoPt.x;
-        this.reportLocY = geoPt.y;
-
-        view.graphics.removeAll();
-
-        const markerSymbol = {
-          type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
-          color: [226, 119, 40],
-          outline: {
-            color: [255, 255, 255],
-            width: 2,
-          },
-        };
-
+      this.view.on("click", (evt) => {
+        this.view.graphics.removeAll();
+        this.reportLoc = webMercatorUtils.webMercatorToGeographic(evt.mapPoint, false) as Point;
         const pointGraphic = new Graphic({
-          geometry: geoPt,
+          geometry: this.reportLoc,
           symbol: markerSymbol,
         });
 
-        view.graphics.add(pointGraphic);
+        this.view.graphics.add(pointGraphic);
       });
     });
   };
