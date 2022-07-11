@@ -2,7 +2,7 @@
 import AppModel from "../model/AppModel";
 
 // services
-import { getMissionService, getMissionServices } from "../services/missionService";
+import { getMissionService, getMissionServices, sendMessage } from "../services/missionService";
 
 // typings
 import { MissionServiceBase, MissionServiceInfo, MissionServiceResponse } from "../typings/mission";
@@ -48,4 +48,9 @@ export async function getMissionServiceInfo(missionId: string): Promise<MissionS
 export function getActiveMissionInfo(): MissionServiceInfo {
   const appModel = AppModel.getInstance();
   return appModel.activeMissionInfo;
+}
+
+export async function sendMissionMessage(missionId: string, token: string, message: string): Promise<boolean> {
+  const svrUrl = getFederatedServerUrl("MissionServer");
+  return await sendMessage(svrUrl, missionId, token, message);
 }

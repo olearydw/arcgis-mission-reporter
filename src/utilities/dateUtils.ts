@@ -1,4 +1,3 @@
-
 import * as intl from "@arcgis/core/intl";
 
 export function formatDate(epoch: number): string {
@@ -6,8 +5,8 @@ export function formatDate(epoch: number): string {
   return d.toLocaleDateString(userLocale(), {
     year: "numeric",
     month: "2-digit",
-    day: "2-digit"
-  })
+    day: "2-digit",
+  });
 }
 
 export function userLocale(): string {

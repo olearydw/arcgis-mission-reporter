@@ -4,6 +4,7 @@ import esriRequest from "@arcgis/core/request";
 // typings
 import { FederatedServer } from "../typings/portal";
 import PortalItem from "@arcgis/core/portal/PortalItem";
+import { MissionReportData } from "../typings/mission";
 
 export async function getFederatedServers(serversUrl: string): Promise<FederatedServer[]> {
   const response = await esriRequest(serversUrl, {
@@ -19,7 +20,8 @@ export async function getPortalItemsByIds(itemIds: string[]): Promise<PortalItem
   try {
     // create promise for each item
     const promises = itemIds.map((itemId) => {
-      return loadPortalItemById(itemId);
+      const portalItemPromise = loadPortalItemById(itemId);
+      return portalItemPromise;
     });
 
     // call all settled to get valid items
@@ -35,6 +37,16 @@ export async function getPortalItemsByIds(itemIds: string[]): Promise<PortalItem
 
     return items;
   } catch (e) {}
+}
+
+export async function getPortalItemData(restUrl: string, itemId: string): Promise<MissionReportData> {
+  const itemDataUrl = `${restUrl}/content/items/${itemId}/data`;
+  const itemData = await esriRequest(itemDataUrl, {
+    query: {
+      f: "json",
+    },
+  });
+  return itemData.data;
 }
 
 async function loadPortalItemById(itemId: string): Promise<PortalItem> {

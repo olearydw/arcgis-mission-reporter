@@ -49,7 +49,7 @@ class MissionsViewModel extends Accessor {
 
   public getThumbnailUrl = (id: string, tnPartial: string): string => {
     let tnUrl: string;
-    if(!tnPartial) {
+    if (!tnPartial) {
       tnUrl = getDefaultPortalItemThumbnail(this.appModel.portal.url);
     } else {
       const contentUrl = tnPartial ? this.appModel.portal.restUrl : this.appModel.portal.url;

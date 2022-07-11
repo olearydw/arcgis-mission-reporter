@@ -3,7 +3,7 @@ import Accessor from "@arcgis/core/core/Accessor";
 import Portal from "@arcgis/core/portal/Portal";
 import { FederatedServer } from "../typings/portal";
 import PortalItem from "@arcgis/core/portal/PortalItem";
-import { MissionServiceInfo } from "../typings/mission";
+import { MissionReportData, MissionServiceInfo } from "../typings/mission";
 import PortalUser from "@arcgis/core/portal/PortalUser";
 import Credential from "@arcgis/core/identity/Credential";
 
@@ -36,9 +36,15 @@ class AppModel extends Accessor {
 
   @property()
   activeMissionItem: PortalItem;
-  
+
   @property()
   activeMissionThumbnailUrl: string;
+
+  @property()
+  activeMissionReportId = "";
+
+  @property()
+  activeMissionReportFormData: MissionReportData;
 
   @property()
   userCredential: Credential;

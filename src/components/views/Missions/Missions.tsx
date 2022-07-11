@@ -181,7 +181,7 @@ class Missions extends Widget {
               Create a Task
             </calcite-button>
             <calcite-button
-              color="neutral"
+              //color="neutral"
               appearance={"outline"}
               id="card-icon-test-2"
               icon-end="file-report"
@@ -199,7 +199,6 @@ class Missions extends Widget {
   private _handleAction = (evt: Event) => {
     const elem = evt.target as HTMLCalciteActionElement;
     const action = elem.getAttribute("data-action");
-    console.log("navigate to ::", action);
     if (action) {
       setRoute(action);
     }

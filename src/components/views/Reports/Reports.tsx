@@ -9,7 +9,8 @@ import { MissionServiceInfo } from "../../../typings/mission";
 import PortalItem from "@arcgis/core/portal/PortalItem";
 
 import { makeReportItemTile } from "./layouts/ReportTile";
-import {makeMissionCard} from "./layouts/ReportCard";
+import { makeMissionCard } from "./layouts/ReportCard";
+import { setRoute } from "../../../router/router";
 
 // References the CSS class name set in style.css
 const CSS = {
@@ -17,19 +18,19 @@ const CSS = {
   reportsContent: "reports-content",
   reportItems: "reports-list",
   reportItemCard: "report-item-card",
-  
+
   leader1: "leader-1",
   trailer1: "trailer-1",
 };
 
-type ListProperties = {
+type ReportsProperties = {
   title?: string;
 } & __esri.WidgetProperties;
 
 @subclass("esri.widgets.Reports")
 class Reports extends Widget {
   // The params are optional
-  constructor(params?: ListProperties) {
+  constructor(params?: ReportsProperties) {
     super(params);
     this.viewModel = new ReportsViewModel();
   }
@@ -52,9 +53,12 @@ class Reports extends Widget {
 
   @aliasOf("viewModel.activeMissionInfo")
   activeMissionInfo: MissionServiceInfo;
-  
+
   @aliasOf("viewModel.activeMissionThumbnailUrl")
   activeMissionThumbnailUrl: string;
+
+  @aliasOf("viewModel.activeMissionReportId")
+  activeMissionReportId: string;
 
   @aliasOf("viewModel.ready")
   ready: boolean;
@@ -95,21 +99,20 @@ class Reports extends Widget {
     const reportTiles = this.reportItems.map((item) => {
       return makeReportItemTile({
         item: item,
-        handler: this._handleReportClick
+        handler: this._handleReportClick,
       });
     });
     const activeMissionCard = makeMissionCard(this.activeMissionInfo, this.activeMissionThumbnailUrl);
     return (
       <div class={CSS.reportsContent}>
-        <p class={this.classes(CSS.leader1, CSS.trailer1)} >There are {this.reportItems.length} active reports available for this mission.</p>
-        <div class={CSS.reportItems}>
-          {reportTiles}
-        </div>
+        <p class={this.classes(CSS.leader1, CSS.trailer1)}>
+          There are {this.reportItems.length} active reports available for this mission.
+        </p>
+        <div class={CSS.reportItems}>{reportTiles}</div>
         <div class={this.classes(CSS.reportItemCard, CSS.leader1, CSS.trailer1)}>
           <p>Selected Mission:</p>
           {activeMissionCard}
         </div>
-        
       </div>
     );
   };
@@ -117,11 +120,15 @@ class Reports extends Widget {
   private _renderNoReports = () => {
     return <h4>There are no active reports for this mission.</h4>;
   };
-  
-  private _handleReportClick = (evt: Event) => {
+
+  private _handleReportClick = async (evt: Event) => {
     const elem = evt.target as HTMLCalciteTileElement;
     const reportId = elem.getAttribute("data-id");
-    console.log("report id ::",reportId);
-  }
+    if (reportId) {
+      this.activeMissionReportId = reportId;
+      await this.viewModel.getReportDetails(reportId);
+      setRoute(`report/${reportId}`);
+    }
+  };
 }
 export default Reports;

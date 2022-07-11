@@ -60,3 +60,32 @@ type Team = {
   id: string;
   title: string;
 };
+
+export type MissionReportData = {
+  authoringApp: "arcgisMissionManager";
+  header: {
+    isVisible: boolean;
+    content: string;
+  };
+  itemId: string;
+  questions: MissionReportQuestion[];
+  reportServiceId: string;
+  reportType: string;
+  reportUrl: string;
+  subHeader: {
+    isVisible: boolean;
+    content: string;
+  };
+};
+
+type MissionReportQuestion = {
+  isRequired: boolean;
+  fieldName: string;
+  name: string;
+  description: string;
+  id: string;
+  position: number;
+  label: string;
+  type: string;
+  validation?: object;
+};

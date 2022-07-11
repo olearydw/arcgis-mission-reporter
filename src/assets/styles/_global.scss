@@ -21,6 +21,10 @@ body {
   margin-bottom: 0.875rem;
 }
 
+.font-size-small {
+  font-size: var(--font-size--1);
+}
+
 .card-actions-end {
   display: flex;
   flex-direction: row;

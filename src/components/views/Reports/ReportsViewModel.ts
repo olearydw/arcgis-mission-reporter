@@ -2,8 +2,9 @@ import { aliasOf, property, subclass } from "@arcgis/core/core/accessorSupport/d
 import Accessor from "@arcgis/core/core/Accessor";
 import AppModel from "../../../model/AppModel";
 import { MissionServiceInfo } from "../../../typings/mission";
-import { getPortalItemsByIds } from "../../../services/portalService";
+import { getPortalItemData, getPortalItemsByIds } from "../../../services/portalService";
 import PortalItem from "@arcgis/core/portal/PortalItem";
+import Handles from "@arcgis/core/core/Handles";
 
 @subclass("src.components.views.Reports.ReportsViewModel")
 class ReportsViewModel extends Accessor {
@@ -12,8 +13,17 @@ class ReportsViewModel extends Accessor {
   }
 
   async initialize() {
-    this._initComponent();
+    await this._initComponent();
   }
+
+  destroy() {
+    if (this._handles) {
+      this._handles.destroy();
+      this._handles = null;
+    }
+  }
+
+  private _handles: Handles = new Handles();
 
   @property()
   appModel: AppModel = AppModel.getInstance();
@@ -26,12 +36,18 @@ class ReportsViewModel extends Accessor {
 
   @aliasOf("appModel.activeMissionInfo")
   activeMissionInfo: MissionServiceInfo;
-  
+
   @aliasOf("appModel.activeMissionThumbnailUrl")
   activeMissionThumbnailUrl: string;
 
+  @aliasOf("appModel.activeMissionReportId")
+  activeMissionReportId: string;
+
   @property()
   ready = false;
+
+  @property()
+  showLoader = false;
 
   @property()
   reportItems: PortalItem[] = [];
@@ -39,6 +55,15 @@ class ReportsViewModel extends Accessor {
   //-------------------------------------------------------------------
   //  Public methods
   //-------------------------------------------------------------------
+  public getReportDetails = async (rptId: string): Promise<boolean> => {
+    const restUrl = this.appModel.portal.restUrl;
+    try {
+      this.appModel.activeMissionReportFormData = await getPortalItemData(restUrl, rptId);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
 
   //-------------------------------------------------------------------
   //  Private methods
@@ -47,6 +72,7 @@ class ReportsViewModel extends Accessor {
   private _initComponent = async () => {
     const activeRptIds: string[] = this.activeMissionInfo?.config?.activeReports ?? [];
     this.reportItems = await getPortalItemsByIds(activeRptIds);
+    // TODO -- add lookup of report data for selected report
     this.ready = true;
   };
 }
