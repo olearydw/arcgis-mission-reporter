@@ -6,6 +6,11 @@ import Widget from "@arcgis/core/widgets/Widget";
 import ReportFormViewModel from "./ReportFormViewModel";
 import { MissionReportData, MissionServiceInfo } from "../../../typings/mission";
 import { makeFormElement } from "./layouts/FormFields";
+import WebMap from "@arcgis/core/WebMap";
+import MapView from "@arcgis/core/views/MapView";
+import * as webMercatorUtils from "@arcgis/core/geometry/support/webMercatorUtils";
+import Point from "@arcgis/core/geometry/Point";
+import Graphic from "@arcgis/core/Graphic";
 //import { watch } from "@arcgis/core/core/reactiveUtils";
 
 // References the CSS class name set in style.css
@@ -57,6 +62,15 @@ class ReportForm extends Widget {
   @aliasOf("viewModel.activeMissionReportFormData")
   activeMissionReportFormData: MissionReportData;
 
+  @aliasOf("viewModel.reportLocX")
+  reportLocX: number;
+
+  @aliasOf("viewModel.reportLocY")
+  reportLocY: number;
+
+  @aliasOf("viewModel.mapId")
+  mapId: string;
+
   @aliasOf("viewModel.ready")
   ready: boolean;
 
@@ -85,6 +99,7 @@ class ReportForm extends Widget {
           <div class={this.classes(CSS.formBase, CSS.leader1, CSS.trailer1)}>
             <form id="form" onsubmit={this._handleFormSubmit}>
               <fieldset>{formElements}</fieldset>
+              <div id={"mapDiv"} class={"report-form-map"} afterCreate={this._startMap} />
               <calcite-button id="submit" type="submit">
                 Submit
               </calcite-button>
@@ -106,6 +121,45 @@ class ReportForm extends Widget {
     this.viewModel.processFormData(formData).then((result: boolean) => {
       console.log("submit result ::", result);
       form.reset();
+    });
+  };
+
+  private _startMap = async (elem: HTMLDivElement) => {
+    const webmap = new WebMap({
+      portalItem: {
+        id: this.mapId,
+      },
+    });
+
+    const view = new MapView({
+      container: elem,
+      map: webmap,
+    });
+
+    await webmap.when().then(() => {
+      view.on("click", (evt) => {
+        const geoPt: Point = webMercatorUtils.webMercatorToGeographic(evt.mapPoint, false) as Point;
+        this.reportLocX = geoPt.x;
+        this.reportLocY = geoPt.y;
+
+        view.graphics.removeAll();
+
+        const markerSymbol = {
+          type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+          color: [226, 119, 40],
+          outline: {
+            color: [255, 255, 255],
+            width: 2,
+          },
+        };
+
+        const pointGraphic = new Graphic({
+          geometry: geoPt,
+          symbol: markerSymbol,
+        });
+
+        view.graphics.add(pointGraphic);
+      });
     });
   };
 }

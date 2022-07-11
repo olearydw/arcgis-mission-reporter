@@ -62,6 +62,9 @@ class ReportFormViewModel extends Accessor {
   activeMissionReportFormData: MissionReportData;
 
   @property()
+  mapId: string;
+
+  @property()
   missionId: string;
 
   @property()
@@ -69,6 +72,12 @@ class ReportFormViewModel extends Accessor {
 
   @property()
   reportItemId: string;
+
+  @property()
+  reportLocX: number;
+
+  @property()
+  reportLocY: number;
 
   @property()
   reportType: string;
@@ -143,8 +152,8 @@ class ReportFormViewModel extends Accessor {
           attributes: attr,
           geometry: {
             spatialReference: { wkid: 4326 },
-            x: 36.416905987253475,
-            y: 37.62853540553151,
+            x: this.reportLocX,
+            y: this.reportLocY,
           },
         },
       },
@@ -162,15 +171,12 @@ class ReportFormViewModel extends Accessor {
     this.reportType = this.activeMissionReportFormData.reportType;
     this.reportItemId = this.activeMissionReportFormData.itemId;
     this.reportUrl = this.activeMissionReportFormData.reportUrl;
+    this.mapId = this.activeMissionInfo.mapIds[0];
 
     const reportService: FeatureLayer = new FeatureLayer({
       url: this.reportUrl,
     });
     await reportService.load();
-
-    for (const field of reportService.fields) {
-      console.log(field.name);
-    }
 
     this.ready = true;
   };
