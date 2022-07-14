@@ -1,6 +1,11 @@
 :root {
-  --text: #f2f2f2;
+  --text: rgba(242, 242, 242, 1);
   --background-color: #262626;
   --header-background: #0d0d0d;
   --header-color: #f2f2f2;
+
+  --font-size--1: 0.875rem;
+
+  --border-color: rgba(128, 128, 128, 0.35);
+  --text-light: rgba(242, 242, 242, 0.75);
 }

@@ -1,5 +1,7 @@
 {
   "appId": "LRvpRa8yPKqOBPvK",
   "appTitle": "Mission Writer",
-  "portalUrl": "https://westwood.idt.geocloud.com/portal"
+  "portalUrl": "https://westwood.idt.geocloud.com/portal",
+  "incidentLyrId": "ae4c63753c9149d7a043f32221db9d97",
+  "incidentReportName": "Incident Report"
 }

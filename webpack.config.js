@@ -100,7 +100,7 @@ module.exports = {
       chunksSortMode: "none",
       hash: false,
       inject: "body",
-      title: "Typescript Boilerplate",
+      title: "Mission Writer",
       calciteJs: '<script src="./assets/arcgis/calcite/calcite.esm.js" type="module"></script>',
       jsapiCss: '<link href="assets/arcgis/esri/themes/dark/main.css" rel="stylesheet">',
       filename: "index.html",

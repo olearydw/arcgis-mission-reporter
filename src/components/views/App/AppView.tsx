@@ -11,6 +11,8 @@ import PortalUser from "@arcgis/core/portal/PortalUser";
 // views
 import Missions from "../Missions/Missions";
 import Reports from "../Reports/Reports";
+import ReportForm from "../ReportForm/ReportForm";
+import Tasks from "../Tasks/Tasks";
 import EsriMap from "../Map/Map";
 import AppModel from "../../../model/AppModel";
 
@@ -18,7 +20,6 @@ import AppModel from "../../../model/AppModel";
 import { makeHeader } from "./layout/Header";
 import { makeNavbar } from "./layout/Navbar";
 import { makeSignedInAlert } from "./layout/Alert";
-import Tasks from "../Tasks/Tasks";
 
 // Styles
 const CSS = {
@@ -100,6 +101,9 @@ class App extends Widget {
       case "reports":
         this.activeComponent = this._getReportsComponent(contentDiv);
         break;
+      case "reportform":
+        this.activeComponent = this._getReportFormComponent(contentDiv);
+        break;
       case "tasks":
         this.activeComponent = this._getTasksComponent(contentDiv);
         break;
@@ -109,7 +113,6 @@ class App extends Widget {
       default:
         return;
     }
-    this.activeComponent.render();
   };
 
   //-------------------------------------------------------------------
@@ -147,6 +150,14 @@ class App extends Widget {
       container: div,
       id: "reports",
       title: "Active Mission Reports",
+    });
+  };
+
+  private _getReportFormComponent = (div: HTMLDivElement) => {
+    return new ReportForm({
+      container: div,
+      id: "reportform",
+      title: "Active Mission Report Form",
     });
   };
 

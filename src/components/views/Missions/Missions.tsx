@@ -150,9 +150,11 @@ class Missions extends Widget {
     });
 
     return (
-      <calcite-pick-list key={"mission-svc-list"} onclick={this._listItemSelect}>
-        {listItems}
-      </calcite-pick-list>
+      <div class={"mission-list-container"}>
+        <calcite-pick-list key={"mission-svc-list"} onclick={this._listItemSelect}>
+          {listItems}
+        </calcite-pick-list>
+      </div>
     );
   };
 
@@ -178,17 +180,17 @@ class Missions extends Widget {
               data-action={"tasks"}
               onclick={this._handleAction}
             >
-              Create a Task
+              Create Task
             </calcite-button>
             <calcite-button
-              color="neutral"
+              //color="neutral"
               appearance={"outline"}
               id="card-icon-test-2"
               icon-end="file-report"
               data-action={"reports"}
               onclick={this._handleAction}
             >
-              Submit a Report
+              Send Report
             </calcite-button>
           </div>
         </calcite-card>
@@ -199,7 +201,6 @@ class Missions extends Widget {
   private _handleAction = (evt: Event) => {
     const elem = evt.target as HTMLCalciteActionElement;
     const action = elem.getAttribute("data-action");
-    console.log("navigate to ::", action);
     if (action) {
       setRoute(action);
     }
