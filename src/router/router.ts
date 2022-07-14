@@ -1,4 +1,4 @@
-import Navigo from "navigo";
+import Navigo, { Match } from "navigo";
 import App from "../components/views/App/AppView";
 
 const router = new Navigo("/", {
@@ -16,6 +16,10 @@ router.on("/missions", () => {
 
 router.on("/reports", () => {
   _app.setActiveView("reports");
+});
+
+router.on("/report/:id", (match: Match) => {
+  _app.setActiveView("reportform");
 });
 
 router.on("/tasks", () => {

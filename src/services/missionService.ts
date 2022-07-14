@@ -19,3 +19,17 @@ export async function getMissionService(svrUrl: string, missionId: string): Prom
 
   return data;
 }
+
+export async function sendMessage(svrUrl: string, missionId: string, token: string, json: string): Promise<boolean> {
+  const sendUrl = `${svrUrl}/rest/services/${missionId}/MissionServer/sendMessage`;
+
+  await esriRequest(sendUrl, {
+    method: "post",
+    query: {
+      f: "json",
+      message: json,
+      token: token,
+    },
+  });
+  return Promise.resolve(true);
+}

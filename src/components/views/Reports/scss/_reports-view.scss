@@ -1,0 +1,48 @@
+@mixin reports-container() {
+  .reports-container {
+  }
+
+  .reports-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .reports-list {
+    display: flex;
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  .report-tile-container {
+    display: flex;
+    width: 100%;
+    margin: 5px 10px;
+    calcite-tile {
+      width: 100%;
+      padding: 10px;
+      &:hover {
+        border-color: red;
+      }
+    }
+    &:hover {
+      background-color: green;
+      border-color: orange;
+      cursor: pointer;
+      color: orange;
+    }
+  }
+
+  .report-item-card {
+    position: absolute;
+    bottom: 5px;
+    calcite-card {
+      max-width: 500px;
+    }
+  }
+}
+
+.reports-container {
+  @include reports-container();
+}

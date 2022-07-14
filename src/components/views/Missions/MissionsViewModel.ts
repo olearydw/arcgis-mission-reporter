@@ -48,14 +48,17 @@ class MissionsViewModel extends Accessor {
   user: PortalUser;
 
   public getThumbnailUrl = (id: string, tnPartial: string): string => {
+    let tnUrl: string;
     if (!tnPartial) {
-      return getDefaultPortalItemThumbnail(this.appModel.portal.url);
+      tnUrl = getDefaultPortalItemThumbnail(this.appModel.portal.url);
     } else {
       const contentUrl = tnPartial ? this.appModel.portal.restUrl : this.appModel.portal.url;
-      const tnUrl = makeItemThumbnailUrl(contentUrl, id, tnPartial);
+      const baseUrl = makeItemThumbnailUrl(contentUrl, id, tnPartial);
       const token = this.appModel.userCredential.token;
-      return `${tnUrl}?token=${token}`;
+      tnUrl = `${baseUrl}?token=${token}`;
     }
+    this.appModel.activeMissionThumbnailUrl = tnUrl;
+    return tnUrl;
   };
 
   private _initComponent = async (): Promise<void> => {
