@@ -150,9 +150,11 @@ class Missions extends Widget {
     });
 
     return (
-      <calcite-pick-list key={"mission-svc-list"} onclick={this._listItemSelect}>
-        {listItems}
-      </calcite-pick-list>
+      <div class={"mission-list-container"}>
+        <calcite-pick-list key={"mission-svc-list"} onclick={this._listItemSelect}>
+          {listItems}
+        </calcite-pick-list>
+      </div>
     );
   };
 
@@ -178,7 +180,7 @@ class Missions extends Widget {
               data-action={"tasks"}
               onclick={this._handleAction}
             >
-              Create a Task
+              Create Task
             </calcite-button>
             <calcite-button
               //color="neutral"
@@ -188,7 +190,7 @@ class Missions extends Widget {
               data-action={"reports"}
               onclick={this._handleAction}
             >
-              Submit a Report
+              Send Report
             </calcite-button>
           </div>
         </calcite-card>
