@@ -97,7 +97,7 @@ class ReportFormViewModel extends Accessor {
   activeMissionReportFormData: MissionReportData;
 
   @property()
-  incidentId: string = "1=1";
+  incidentId = "1=1";
 
   @property()
   mapId: string;
