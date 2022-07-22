@@ -1,10 +1,13 @@
-import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
+import {
+  subclass,
+  property
+} from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
 
 // References the CSS class name set in style.css
 const CSS = {
-  mapContainer: "list-container",
+  mapContainer: "list-container"
 };
 
 type MapProperties = {
@@ -38,7 +41,9 @@ class Map extends Widget {
   //-------------------------------------------------------------------
 
   render() {
-    const title = this.title ? this.title : "Mission task list and map goes here...";
+    const title = this.title
+      ? this.title
+      : "Mission task list and map goes here...";
     return (
       <div key={"map-container-key"} id={"view"} class={CSS.mapContainer}>
         <p>{title}</p>

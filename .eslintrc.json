@@ -10,7 +10,11 @@
     "node": true,
     "es6": true
   },
-  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
+  ],
   "plugins": ["@typescript-eslint"],
   "rules": {
     "no-unused-vars": "off",

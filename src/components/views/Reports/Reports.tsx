@@ -1,4 +1,8 @@
-import { subclass, property, aliasOf } from "@arcgis/core/core/accessorSupport/decorators";
+import {
+  subclass,
+  property,
+  aliasOf
+} from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
 
@@ -20,7 +24,7 @@ const CSS = {
   reportItemCard: "report-item-card",
 
   leader1: "leader-1",
-  trailer1: "trailer-1",
+  trailer1: "trailer-1"
 };
 
 type ReportsProperties = {
@@ -74,7 +78,9 @@ class Reports extends Widget {
   //-------------------------------------------------------------------
 
   render() {
-    const title = this.title ? this.title : "Reports of portal items goes here...";
+    const title = this.title
+      ? this.title
+      : "Reports of portal items goes here...";
     const content = this._getViewContent();
     return (
       <div class={CSS.reportsContainer}>
@@ -89,9 +95,18 @@ class Reports extends Widget {
   //-------------------------------------------------------------------
   private _getViewContent = () => {
     if (!this.ready) {
-      return <calcite-loader active scale="l" text="Loading Active Reports" type="indeterminate" />;
+      return (
+        <calcite-loader
+          active
+          scale="l"
+          text="Loading Active Reports"
+          type="indeterminate"
+        />
+      );
     } else {
-      return this.reportItems.length ? this._renderReports() : this._renderNoReports();
+      return this.reportItems.length
+        ? this._renderReports()
+        : this._renderNoReports();
     }
   };
 
@@ -99,17 +114,23 @@ class Reports extends Widget {
     const reportTiles = this.reportItems.map((item) => {
       return makeReportItemTile({
         item: item,
-        handler: this._handleReportClick,
+        handler: this._handleReportClick
       });
     });
-    const activeMissionCard = makeMissionCard(this.activeMissionInfo, this.activeMissionThumbnailUrl);
+    const activeMissionCard = makeMissionCard(
+      this.activeMissionInfo,
+      this.activeMissionThumbnailUrl
+    );
     return (
       <div class={CSS.reportsContent}>
         <p class={this.classes(CSS.leader1, CSS.trailer1)}>
-          There are {this.reportItems.length} active reports available for this mission.
+          There are {this.reportItems.length} active reports available for this
+          mission.
         </p>
         <div class={CSS.reportItems}>{reportTiles}</div>
-        <div class={this.classes(CSS.reportItemCard, CSS.leader1, CSS.trailer1)}>
+        <div
+          class={this.classes(CSS.reportItemCard, CSS.leader1, CSS.trailer1)}
+        >
           <p>Selected Mission:</p>
           {activeMissionCard}
         </div>

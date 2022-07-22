@@ -6,4 +6,9 @@ export type AppConfig = {
   incidentReportName: string;
 };
 
-export type RenderState = "loading" | "supported" | "unsupported" | "incident" | "success";
+export type RenderState =
+  | "loading"
+  | "supported"
+  | "unsupported"
+  | "incident"
+  | "success";

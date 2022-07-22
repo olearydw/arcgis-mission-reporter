@@ -9,7 +9,9 @@ import { AppConfig } from "../../typings/app";
 /**
  * Method for obtaining logged in user credential object
  */
-export async function getUserCredential(appConfig: AppConfig): Promise<Credential> {
+export async function getUserCredential(
+  appConfig: AppConfig
+): Promise<Credential> {
   const { portalUrl } = appConfig;
   const url = `${portalUrl}/sharing`;
   try {
@@ -26,7 +28,7 @@ export function getOauthInfos(appConfig: AppConfig): OAuthInfo {
     portalUrl: portalUrl,
     flowType: "authorization-code",
     popup: true,
-    popupCallbackUrl: "oauth-callback.html",
+    popupCallbackUrl: "oauth-callback.html"
   });
 }
 

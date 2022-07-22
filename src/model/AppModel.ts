@@ -1,4 +1,7 @@
-import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
+import {
+  subclass,
+  property
+} from "@arcgis/core/core/accessorSupport/decorators";
 import Accessor from "@arcgis/core/core/Accessor";
 import Portal from "@arcgis/core/portal/Portal";
 import { FederatedServer } from "../typings/portal";

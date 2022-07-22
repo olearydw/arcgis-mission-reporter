@@ -2,10 +2,18 @@
 import AppModel from "../model/AppModel";
 
 // services
-import { getMissionService, getMissionServices, sendMessage } from "../services/missionService";
+import {
+  getMissionService,
+  getMissionServices,
+  sendMessage
+} from "../services/missionService";
 
 // typings
-import { MissionServiceBase, MissionServiceInfo, MissionServiceResponse } from "../typings/mission";
+import {
+  MissionServiceBase,
+  MissionServiceInfo,
+  MissionServiceResponse
+} from "../typings/mission";
 
 // utilities.portal
 import { getFederatedServerUrl } from "../utilities/portal/instance";
@@ -21,14 +29,18 @@ export async function getAllMissions(): Promise<MissionServiceBase[]> {
   }
 
   try {
-    const serviceInfos: MissionServiceResponse = await getMissionServices(missionServerUrl);
+    const serviceInfos: MissionServiceResponse = await getMissionServices(
+      missionServerUrl
+    );
     return serviceInfos.services;
   } catch (e) {
     return Promise.reject("error fetching ::");
   }
 }
 
-export async function getMissionServiceInfo(missionId: string): Promise<MissionServiceInfo> {
+export async function getMissionServiceInfo(
+  missionId: string
+): Promise<MissionServiceInfo> {
   const appModel = AppModel.getInstance();
   const missionServerUrl = getFederatedServerUrl("MissionServer");
 
@@ -50,7 +62,11 @@ export function getActiveMissionInfo(): MissionServiceInfo {
   return appModel.activeMissionInfo;
 }
 
-export async function sendMissionMessage(missionId: string, token: string, message: string): Promise<boolean> {
+export async function sendMissionMessage(
+  missionId: string,
+  token: string,
+  message: string
+): Promise<boolean> {
   const svrUrl = getFederatedServerUrl("MissionServer");
   return await sendMessage(svrUrl, missionId, token, message);
 }

@@ -27,14 +27,14 @@ module.exports = {
   watchOptions: {
     aggregateTimeout: 600,
     ignored: /node_modules/,
-    poll: 1000,
+    poll: 1000
   },
   module: {
     rules: [
       {
         test: /\.(ts|tsx)$/,
         use: "ts-loader",
-        exclude: /node_modules/,
+        exclude: /node_modules/
       },
       {
         test: /\.(scss|css)$/i,
@@ -42,23 +42,23 @@ module.exports = {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              publicPath: "../../",
-            },
+              publicPath: "../../"
+            }
           },
           "css-loader",
           "postcss-loader",
-          "sass-loader",
-        ],
+          "sass-loader"
+        ]
       },
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
-        type: "asset/resource",
+        type: "asset/resource"
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
-        type: "asset/resource",
-      },
-    ],
+        type: "asset/resource"
+      }
+    ]
   },
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -66,56 +66,58 @@ module.exports = {
     chunkFilename: "js/chunks/[id].js",
     assetModuleFilename: "assets/resources/[name][ext]",
     publicPath: "",
-    clean: true,
+    clean: true
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "assets/styles/[name].css",
+      filename: "assets/styles/[name].css"
     }),
     new CopyPlugin({
       patterns: [
         {
           from: "node_modules/@esri/calcite-components/dist/calcite",
-          to: "assets/arcgis/calcite/",
+          to: "assets/arcgis/calcite/"
         },
         {
           from: "src/config",
-          to: "config",
+          to: "config"
         },
         {
           from: "src/oauth-callback.html",
-          to: path.resolve(__dirname, "dist"),
+          to: path.resolve(__dirname, "dist")
         },
         {
           from: "src/assets/images/favicon.ico",
-          to: path.resolve(__dirname, "dist"),
-        },
-      ],
+          to: path.resolve(__dirname, "dist")
+        }
+      ]
     }),
     new ArcGISPlugin({
       copyAssets: true,
-      assetsDir: "assets/arcgis",
+      assetsDir: "assets/arcgis"
     }),
     new HtmlWebPackPlugin({
       chunksSortMode: "none",
       hash: false,
       inject: "body",
       title: "Mission Writer",
-      calciteJs: '<script src="./assets/arcgis/calcite/calcite.esm.js" type="module"></script>',
-      jsapiCss: '<link href="assets/arcgis/esri/themes/dark/main.css" rel="stylesheet">',
+      calciteJs:
+        '<script src="./assets/arcgis/calcite/calcite.esm.js" type="module"></script>',
+      jsapiCss:
+        '<link href="assets/arcgis/esri/themes/dark/main.css" rel="stylesheet">',
       filename: "index.html",
       template: "src/index.html",
       favicon: "src/assets/images/favicon.ico",
-      showErrors: true,
-    }),
+      showErrors: true
+    })
   ],
   resolve: {
-    extensions: [".ts", ".tsx", ".js", "json", "woff", "woof2"],
+    extensions: [".ts", ".tsx", ".js", "json", "woff", "woof2"]
   },
   target: target,
   devServer: {
     static: path.join(__dirname, "dist"),
     compress: true,
-    port: 3001,
-  },
+    port: 3001
+  }
 };

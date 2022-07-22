@@ -3,8 +3,12 @@ import { tsx } from "@arcgis/core/widgets/support/widget";
 import { MissionServiceInfo } from "../../../../typings/mission";
 import { formatDate } from "../../../../utilities/dateUtils";
 
-export const makeMissionCard = (missionSvcInfo: MissionServiceInfo, thumbnailUrl: string) => {
-  const { created, description, modified, owner, snippet, title } = missionSvcInfo;
+export const makeMissionCard = (
+  missionSvcInfo: MissionServiceInfo,
+  thumbnailUrl: string
+) => {
+  const { created, description, modified, owner, snippet, title } =
+    missionSvcInfo;
   return (
     <calcite-card thumbnail-position="inline-start">
       <img src={thumbnailUrl} slot="thumbnail" alt=""></img>

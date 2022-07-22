@@ -1,20 +1,42 @@
-import { subclass, property, aliasOf } from "@arcgis/core/core/accessorSupport/decorators";
+// arcgis.core
+import Graphic from "@arcgis/core/Graphic";
+import WebMap from "@arcgis/core/WebMap";
+
+// arcgis.core.core
+import {
+  subclass,
+  property,
+  aliasOf
+} from "@arcgis/core/core/accessorSupport/decorators";
+
+// arcgis.core.geometry
+import Point from "@arcgis/core/geometry/Point";
+import * as webMercatorUtils from "@arcgis/core/geometry/support/webMercatorUtils";
+
+// arcgis.core.views
+import MapView from "@arcgis/core/views/MapView";
+
+// arcgis.core.widgets
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
 
 // components.views.ReportForm
 import ReportFormViewModel from "./ReportFormViewModel";
-import { MissionReportData, MissionServiceInfo } from "../../../typings/mission";
-import { makeFormElement } from "./layouts/FormFields";
-import WebMap from "@arcgis/core/WebMap";
-import MapView from "@arcgis/core/views/MapView";
-import * as webMercatorUtils from "@arcgis/core/geometry/support/webMercatorUtils";
-import Point from "@arcgis/core/geometry/Point";
-import Graphic from "@arcgis/core/Graphic";
-import { setRoute } from "../../../router/router";
-import { RenderState } from "../../../typings/app";
 
-// References the CSS class name set in style.css
+// components.views.ReportForm.layouts
+import { makeFormElement } from "./layouts/FormFields";
+
+// router
+import { setRoute } from "../../../router/router";
+
+// typings
+import { RenderState } from "../../../typings/app";
+import {
+  MissionReportData,
+  MissionServiceInfo
+} from "../../../typings/mission";
+
+// component styles
 const CSS = {
   reportFormContainer: "report-form-container",
   formBase: "report-form-base",
@@ -22,25 +44,25 @@ const CSS = {
 
   leader1: "leader-1",
   trailer1: "trailer-1",
-  fontSmall: "font-size-small",
+  fontSmall: "font-size-small"
 };
 
 const markerSymbol = {
-  type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+  type: "simple-marker",
   color: [226, 119, 40],
   outline: {
     color: [255, 255, 255],
-    width: 2,
-  },
+    width: 2
+  }
 };
 
-type MapProperties = {
+type ComponentProperties = {
   title?: string;
 } & __esri.WidgetProperties;
 
 @subclass("src.components.views.ReportForm.ReportForm")
 class ReportForm extends Widget {
-  constructor(params?: MapProperties) {
+  constructor(params?: ComponentProperties) {
     super(params);
     this.viewModel = new ReportFormViewModel();
   }
@@ -70,6 +92,9 @@ class ReportForm extends Widget {
 
   @aliasOf("viewModel.incidentId")
   incidentId: string;
+
+  @aliasOf("viewModel.incidentGraphics")
+  incidentGraphics: Graphic[];
 
   @aliasOf("viewModel.mapId")
   mapId: string;
@@ -118,14 +143,26 @@ class ReportForm extends Widget {
   //  Conditional rendering methods
   //-------------------------------------------------------------------
   private _renderLoading = () => {
-    return <div> View loading...</div>;
+    return (
+      <div key={"loader"}>
+        <calcite-loader
+          active={"true"}
+          label="Loading view"
+          scale="m"
+          text="Loading incident data..."
+        ></calcite-loader>
+      </div>
+    );
   };
 
   private _renderUnsupported = () => {
     return (
       <div>
         <h5>Unsupported Report</h5>
-        <p>This report contains form elements not yet supported by the application.</p>
+        <p>
+          This report contains form elements not yet supported by the
+          application.
+        </p>
         <div class={"form-action-container"}>
           <calcite-button
             icon-end="arrow-up-right"
@@ -148,13 +185,23 @@ class ReportForm extends Widget {
     });
 
     return (
-      <div key={"map-container-key"} id={"view"} class={CSS.reportFormContainer}>
+      <div
+        key={"map-container-key"}
+        id={"view"}
+        class={CSS.reportFormContainer}
+      >
         <p class={CSS.trailer1}>{reportType ?? this.title}</p>
-        <p class={this.classes(CSS.leader1, CSS.trailer1, CSS.fontSmall)}>{this.subtitle}</p>
+        <p class={this.classes(CSS.leader1, CSS.trailer1, CSS.fontSmall)}>
+          {this.subtitle}
+        </p>
         <div class={this.classes(CSS.formBase, CSS.leader1, CSS.trailer1)}>
           <form id="form" onsubmit={this._handleFormSubmit}>
             <fieldset>{formElements}</fieldset>
-            <div id={"mapDiv"} class={"report-form-map"} afterCreate={this._startMap} />
+            <div
+              id={"mapDiv"}
+              class={"report-form-map"}
+              afterCreate={this._startMap}
+            />
             <div class={"form-action-container"}>
               <calcite-action
                 text="Cancel"
@@ -165,7 +212,12 @@ class ReportForm extends Widget {
                 icon="arrow-left"
                 onclick={this._handleCancelAction}
               ></calcite-action>
-              <calcite-button id="submit" type="submit" scale={"s"} disabled={!submitEnabled}>
+              <calcite-button
+                id="submit"
+                type="submit"
+                scale={"s"}
+                disabled={!submitEnabled}
+              >
                 Submit
               </calcite-button>
             </div>
@@ -177,29 +229,45 @@ class ReportForm extends Widget {
 
   private _renderIncidentForm = () => {
     const { reportType } = this.activeMissionReportFormData ?? {};
+
+    const selectOptions = this.incidentGraphics.length
+      ? this.incidentGraphics.map((incident) => {
+          const attr = incident.attributes;
+          return (
+            <calcite-option label={attr.incidentname} value={attr.incidentid}>
+              {attr.incidentname}
+            </calcite-option>
+          );
+        })
+      : null;
+
     return (
       <div key={"incident-report-key"} class={CSS.reportFormContainer}>
         <p class={CSS.trailer1}>{reportType ?? this.title}</p>
-        <p class={this.classes(CSS.leader1, CSS.trailer1, CSS.fontSmall)}>{this.subtitle}</p>
+        <p class={this.classes(CSS.leader1, CSS.trailer1, CSS.fontSmall)}>
+          {this.subtitle}
+        </p>
 
         <div class={this.classes(CSS.formBase, CSS.leader1, CSS.trailer1)}>
-          <form id={"incident-form"} onsubmit={this._handleIncidentSubmitAction}>
+          <form
+            id={"incident-form"}
+            onsubmit={this._handleIncidentSubmitAction}
+          >
             <fieldset>
-              <calcite-label for={"incident-report"}>Provide Incident Identifier:</calcite-label>
-              <calcite-input
-                autofocus={"true"}
-                clearable={"true"}
-                id={"incident-report"}
-                label="Incident Id"
-                placeholder={"Enter incident Id here"}
-                type={"text"}
-                scale={"l"}
-                name={"incidentId"}
-              ></calcite-input>
+              <calcite-label for={"incident-select"}>
+                Select Incident to Report:
+              </calcite-label>
+              <calcite-select
+                label={"incident-selector"}
+                id={"incident-select"}
+                name={"incident"}
+              >
+                {selectOptions}
+              </calcite-select>
             </fieldset>
             <div class={"form-action-container"}>
               <calcite-button id="submit" type="submit" scale={"m"}>
-                Get Incident Info
+                Send Incident Report
               </calcite-button>
             </div>
           </form>
@@ -211,8 +279,14 @@ class ReportForm extends Widget {
   private _renderSuccess = () => {
     return (
       <div class={"success-container"}>
-        <h5>The report was successfully submitted. Returning you to the reports list...</h5>
-        <div class={"form-action-container leader-1 trailer-1"} afterCreate={this._handleSuccessComplete}>
+        <h5>
+          The report was successfully submitted. Returning you to the reports
+          list...
+        </h5>
+        <div
+          class={"form-action-container leader-1 trailer-1"}
+          afterCreate={this._handleSuccessComplete}
+        >
           <calcite-button
             icon-end="arrow-up-right"
             //icon-start="file-report"
@@ -250,7 +324,7 @@ class ReportForm extends Widget {
     setRoute();
   };
 
-  private _handleIncidentSubmitAction = (evt: Event) => {
+  private _handleIncidentSubmitAction = async (evt: Event) => {
     evt.preventDefault();
     const form = evt.target as HTMLFormElement;
     const formData = new FormData(form);
@@ -258,31 +332,46 @@ class ReportForm extends Widget {
     for (const data of formData.entries()) {
       this.incidentId = data[1] as string;
     }
-    this.viewModel.fetchIncidentDetails(this.incidentId);
+
+    if (!this.incidentId) {
+      return;
+    }
+
+    try {
+      const success = await this.viewModel.makeIncidentReport(this.incidentId);
+      if (success) {
+        this.renderState = "success";
+      }
+    } catch (e) {
+      console.log("error creating incident report ::", e);
+    }
   };
 
   private _startMap = async (elem: HTMLDivElement) => {
     const webmap = new WebMap({
       portalItem: {
-        id: this.mapId,
-      },
+        id: this.mapId
+      }
     });
 
     this.view = new MapView({
       container: elem,
       map: webmap,
       ui: {
-        components: ["zoom"],
-      },
+        components: ["zoom"]
+      }
     });
 
     await webmap.when().then(() => {
       this.view.on("click", (evt) => {
         this.view.graphics.removeAll();
-        this.reportLoc = webMercatorUtils.webMercatorToGeographic(evt.mapPoint, false) as Point;
+        this.reportLoc = webMercatorUtils.webMercatorToGeographic(
+          evt.mapPoint,
+          false
+        ) as Point;
         const pointGraphic = new Graphic({
           geometry: this.reportLoc,
-          symbol: markerSymbol,
+          symbol: markerSymbol
         });
 
         this.view.graphics.add(pointGraphic);

@@ -5,7 +5,7 @@ export function formatDate(epoch: number): string {
   return d.toLocaleDateString(userLocale(), {
     year: "numeric",
     month: "2-digit",
-    day: "2-digit",
+    day: "2-digit"
   });
 }
 
