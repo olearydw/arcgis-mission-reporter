@@ -147,7 +147,7 @@ class App extends Widget {
     return new Missions({
       container: div,
       id: "missions",
-      title: "Active Missions 2"
+      title: "Active Missions"
     });
   };
 
