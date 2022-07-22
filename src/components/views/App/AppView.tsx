@@ -3,7 +3,11 @@ import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
 
 // arcgis.core.core
-import { subclass, property, aliasOf } from "@arcgis/core/core/accessorSupport/decorators";
+import {
+  subclass,
+  property,
+  aliasOf
+} from "@arcgis/core/core/accessorSupport/decorators";
 
 // arcgis.core.portal
 import PortalUser from "@arcgis/core/portal/PortalUser";
@@ -29,7 +33,7 @@ const CSS = {
   contentContainer: "content-container",
 
   // conditional styles
-  darkTheme: "calcite-theme-dark",
+  darkTheme: "calcite-theme-dark"
 };
 
 type AppProperties = {
@@ -122,7 +126,9 @@ class App extends Widget {
   private _getContentContainer = (): HTMLDivElement => {
     let contentNode: HTMLDivElement;
     const contentNodeId = "content";
-    const targetNode: HTMLDivElement = document.getElementById("content") as HTMLDivElement;
+    const targetNode: HTMLDivElement = document.getElementById(
+      "content"
+    ) as HTMLDivElement;
 
     if (targetNode) {
       targetNode.replaceChildren();
@@ -141,7 +147,7 @@ class App extends Widget {
     return new Missions({
       container: div,
       id: "missions",
-      title: "Active Missions",
+      title: "Active Missions"
     });
   };
 
@@ -149,7 +155,7 @@ class App extends Widget {
     return new Reports({
       container: div,
       id: "reports",
-      title: "Active Mission Reports",
+      title: "Active Mission Reports"
     });
   };
 
@@ -157,7 +163,7 @@ class App extends Widget {
     return new ReportForm({
       container: div,
       id: "reportform",
-      title: "Active Mission Report Form",
+      title: "Active Mission Report Form"
     });
   };
 
@@ -165,7 +171,7 @@ class App extends Widget {
     return new Tasks({
       container: div,
       id: "tasks",
-      title: "Mission Tasks",
+      title: "Mission Tasks"
     });
   };
 
@@ -173,7 +179,7 @@ class App extends Widget {
     return new EsriMap({
       container: div,
       id: "map",
-      title: "View the Mission Map",
+      title: "View the Mission Map"
     });
   };
 }

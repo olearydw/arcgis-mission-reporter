@@ -4,7 +4,11 @@ import Widget from "@arcgis/core/widgets/Widget";
 import Handles from "@arcgis/core/core/Handles";
 
 // arcgis.core.core
-import { aliasOf, property, subclass } from "@arcgis/core/core/accessorSupport/decorators";
+import {
+  aliasOf,
+  property,
+  subclass
+} from "@arcgis/core/core/accessorSupport/decorators";
 import { watch } from "@arcgis/core/core/reactiveUtils";
 
 // arcgis.core.portal
@@ -14,7 +18,10 @@ import PortalUser from "@arcgis/core/portal/PortalUser";
 import MissionsViewModel from "./MissionsViewModel";
 
 // typings
-import { MissionServiceBase, MissionServiceInfo } from "../../../typings/mission";
+import {
+  MissionServiceBase,
+  MissionServiceInfo
+} from "../../../typings/mission";
 import { getMissionServiceInfo } from "../../../mediators/MissionMediator";
 import { setRoute } from "../../../router/router";
 
@@ -24,7 +31,7 @@ const CSS = {
   cardActionsEnd: "card-actions-end",
 
   leader1: "leader-1",
-  trailer1: "trailer-1",
+  trailer1: "trailer-1"
 };
 
 type MissionProperties = {
@@ -98,9 +105,13 @@ class Missions extends Widget {
       return <div key={"not-ready-div"} />;
     }
 
-    const title = <p class={CSS.trailer1}>{this.title ? this.title : "Missions List"}</p>;
+    const title = (
+      <p class={CSS.trailer1}>{this.title ? this.title : "Missions List"}</p>
+    );
     const missionList = this._makeMissionList();
-    const activeMissionElem = this.activeMissionInfo ? this._makeActionMissionElement() : null;
+    const activeMissionElem = this.activeMissionInfo
+      ? this._makeActionMissionElement()
+      : null;
 
     return (
       <div class={CSS.missionsContainer}>
@@ -121,8 +132,8 @@ class Missions extends Widget {
         () => this.activeMissionId,
         async (missionId) => {
           this.activeMissionInfo = await getMissionServiceInfo(missionId);
-        },
-      ),
+        }
+      )
     );
   };
 
@@ -143,7 +154,12 @@ class Missions extends Widget {
       const isSelected = service.name === this.activeMissionId;
       const desc = `Mission ID: ${service.name}}`;
       return (
-        <calcite-pick-list-item label={service.title} description={desc} selected={isSelected} value={service.name}>
+        <calcite-pick-list-item
+          label={service.title}
+          description={desc}
+          selected={isSelected}
+          value={service.name}
+        >
           <calcite-action slot="actions-end" icon="layer"></calcite-action>
         </calcite-pick-list-item>
       );
@@ -151,7 +167,10 @@ class Missions extends Widget {
 
     return (
       <div class={"mission-list-container"}>
-        <calcite-pick-list key={"mission-svc-list"} onclick={this._listItemSelect}>
+        <calcite-pick-list
+          key={"mission-svc-list"}
+          onclick={this._listItemSelect}
+        >
           {listItems}
         </calcite-pick-list>
       </div>
@@ -159,7 +178,8 @@ class Missions extends Widget {
   };
 
   private _makeActionMissionElement = () => {
-    const { created, missionId, thumbnail, snippet, title, modified, owner } = this.activeMissionInfo;
+    const { created, missionId, thumbnail, snippet, title, modified, owner } =
+      this.activeMissionInfo;
     const tnUrl = this.viewModel.getThumbnailUrl(missionId, thumbnail);
     return (
       <div id="card-container">

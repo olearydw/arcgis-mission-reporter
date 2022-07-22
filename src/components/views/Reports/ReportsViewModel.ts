@@ -1,8 +1,15 @@
-import { aliasOf, property, subclass } from "@arcgis/core/core/accessorSupport/decorators";
+import {
+  aliasOf,
+  property,
+  subclass
+} from "@arcgis/core/core/accessorSupport/decorators";
 import Accessor from "@arcgis/core/core/Accessor";
 import AppModel from "../../../model/AppModel";
 import { MissionServiceInfo } from "../../../typings/mission";
-import { getPortalItemData, getPortalItemsByIds } from "../../../services/portalService";
+import {
+  getPortalItemData,
+  getPortalItemsByIds
+} from "../../../services/portalService";
 import PortalItem from "@arcgis/core/portal/PortalItem";
 import Handles from "@arcgis/core/core/Handles";
 
@@ -58,7 +65,10 @@ class ReportsViewModel extends Accessor {
   public getReportDetails = async (rptId: string): Promise<boolean> => {
     const restUrl = this.appModel.portal.restUrl;
     try {
-      this.appModel.activeMissionReportFormData = await getPortalItemData(restUrl, rptId);
+      this.appModel.activeMissionReportFormData = await getPortalItemData(
+        restUrl,
+        rptId
+      );
       return true;
     } catch (e) {
       return false;
@@ -70,7 +80,8 @@ class ReportsViewModel extends Accessor {
   //-------------------------------------------------------------------
 
   private _initComponent = async () => {
-    const activeRptIds: string[] = this.activeMissionInfo?.config?.activeReports ?? [];
+    const activeRptIds: string[] =
+      this.activeMissionInfo?.config?.activeReports ?? [];
     this.reportItems = await getPortalItemsByIds(activeRptIds);
     // TODO -- add lookup of report data for selected report
     this.ready = true;

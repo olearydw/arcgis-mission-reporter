@@ -4,7 +4,7 @@ import PortalItem from "@arcgis/core/portal/PortalItem";
 
 const CSS = {
   reportTileContainer: "report-tile-container",
-  reportTile: "report-tile",
+  reportTile: "report-tile"
 };
 
 type MakeReportTileProperties = {
