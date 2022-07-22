@@ -6,15 +6,19 @@ import { FederatedServer } from "../typings/portal";
 import PortalItem from "@arcgis/core/portal/PortalItem";
 import { MissionReportData } from "../typings/mission";
 
-export async function getFederatedServers(serversUrl: string): Promise<FederatedServer[]> {
+export async function getFederatedServers(
+  serversUrl: string
+): Promise<FederatedServer[]> {
   const response = await esriRequest(serversUrl, {
-    query: { f: "json" },
+    query: { f: "json" }
   });
 
   return response.data?.servers ?? [];
 }
 
-export async function getPortalItemsByIds(itemIds: string[]): Promise<PortalItem[]> {
+export async function getPortalItemsByIds(
+  itemIds: string[]
+): Promise<PortalItem[]> {
   // arr of portal items for return
   const items: PortalItem[] = [];
   try {
@@ -39,12 +43,15 @@ export async function getPortalItemsByIds(itemIds: string[]): Promise<PortalItem
   } catch (e) {}
 }
 
-export async function getPortalItemData(restUrl: string, itemId: string): Promise<MissionReportData> {
+export async function getPortalItemData(
+  restUrl: string,
+  itemId: string
+): Promise<MissionReportData> {
   const itemDataUrl = `${restUrl}/content/items/${itemId}/data`;
   const itemData = await esriRequest(itemDataUrl, {
     query: {
-      f: "json",
-    },
+      f: "json"
+    }
   });
   return itemData.data;
 }
@@ -52,7 +59,7 @@ export async function getPortalItemData(restUrl: string, itemId: string): Promis
 async function loadPortalItemById(itemId: string): Promise<PortalItem> {
   try {
     const item = await new PortalItem({
-      id: itemId,
+      id: itemId
     });
     return await item.load();
   } catch (e) {}

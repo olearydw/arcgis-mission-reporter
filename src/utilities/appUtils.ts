@@ -24,13 +24,19 @@ export function getClone(): unknown {
   const teamInfo = {
     id: "12345",
     group: "Tysons Dev Center",
-    projects: ["excalibur", "mission", "motion imagery", "all source", "national imagery"],
+    projects: [
+      "excalibur",
+      "mission",
+      "motion imagery",
+      "all source",
+      "national imagery"
+    ],
     address: {
       street: "Westwood Center Drive",
       city: "Vienna",
       state: "VA",
-      zip: "22554",
-    },
+      zip: "22554"
+    }
   };
   return cloneDeep(teamInfo);
 }

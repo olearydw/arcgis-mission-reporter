@@ -9,7 +9,7 @@ export async function initPortal(url: string): Promise<Portal> {
   const model = appModel.getInstance();
   try {
     const portal: Portal = new Portal({
-      url: url,
+      url: url
     });
     portal.authMode = "immediate";
     const loadedPortal: Portal = await portal.load();
@@ -41,7 +41,9 @@ export async function initFederatedServers(): Promise<boolean> {
   }
 }
 
-export function getFederatedServer(serverFunction: ServerFunction): FederatedServer | null {
+export function getFederatedServer(
+  serverFunction: ServerFunction
+): FederatedServer | null {
   const model = appModel.getInstance();
   const federatedServers: FederatedServer[] = model.federatedServers;
 
@@ -52,7 +54,9 @@ export function getFederatedServer(serverFunction: ServerFunction): FederatedSer
   return foundServer?.length ? foundServer[0] : null;
 }
 
-export function getFederatedServerUrl(serverFunction: ServerFunction): string | null {
+export function getFederatedServerUrl(
+  serverFunction: ServerFunction
+): string | null {
   const server = getFederatedServer(serverFunction);
 
   return server ? server.url : null;

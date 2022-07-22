@@ -17,7 +17,11 @@ import AppView from "./components/views/App/AppView";
 import { initRouter } from "./router/router";
 
 // utilities
-import { getOauthInfos, getUserCredential, registerOauthInfos } from "./utilities/portal/login";
+import {
+  getOauthInfos,
+  getUserCredential,
+  registerOauthInfos
+} from "./utilities/portal/login";
 import { initFederatedServers, initPortal } from "./utilities/portal/instance";
 
 // typings
@@ -37,7 +41,7 @@ window.onload = async () => {
   // start app container
   const app = new AppView({
     container: "appContainer",
-    title: config.appTitle,
+    title: config.appTitle
   });
 
   try {

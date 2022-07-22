@@ -1,23 +1,51 @@
-import { aliasOf, property, subclass } from "@arcgis/core/core/accessorSupport/decorators";
+// arcgis.core.core
+import {
+  aliasOf,
+  property,
+  subclass
+} from "@arcgis/core/core/accessorSupport/decorators";
 import Accessor from "@arcgis/core/core/Accessor";
-import AppModel from "../../../model/AppModel";
 import Handles from "@arcgis/core/core/Handles";
-import { MissionReportData, MissionReportQuestion, MissionServiceInfo } from "../../../typings/mission";
-import { setRoute } from "../../../router/router";
-import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
-import { getUuid } from "../../../utilities/appUtils";
-import { sendMissionMessage } from "../../../mediators/MissionMediator";
-import Point from "@arcgis/core/geometry/Point";
-import { AppConfig, RenderState } from "../../../typings/app";
-//import { watch } from "@arcgis/core/core/reactiveUtils";
-import PortalItem from "@arcgis/core/portal/PortalItem";
-//import Query from "@arcgis/core/rest/support/Query";
 
-// app config
+// arcgis.core.geometry
+import Point from "@arcgis/core/geometry/Point";
+
+// arcgis.core.layers
+import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
+
+// arcgis.core.portal
+import PortalItem from "@arcgis/core/portal/PortalItem";
+
+// src.config
 import appConfig from "../../../config/app-config.json";
 
+// src.mediators
+import { sendMissionMessage } from "../../../mediators/MissionMediator";
+
+// src.model
+import AppModel from "../../../model/AppModel";
+
+// src.router
+import { setRoute } from "../../../router/router";
+
+// src.typings
+import { AppConfig, RenderState } from "../../../typings/app";
+import {
+  MissionReportData,
+  MissionReportQuestion,
+  MissionServiceInfo
+} from "../../../typings/mission";
+
+// src.utilities
+import { getUuid } from "../../../utilities/appUtils";
+import FeatureSet from "@arcgis/core/rest/support/FeatureSet";
+import Graphic from "@arcgis/core/Graphic";
+
 const REPORT_STALE_TIME = 2384424000000;
-const SUPPORTED_FIELD_TYPES = ["esriQuestionTypeText", "esriQuestionTypeTextArea"];
+const SUPPORTED_FIELD_TYPES = [
+  "esriQuestionTypeText",
+  "esriQuestionTypeTextArea"
+];
 
 type IncidentFeature = {
   incidentname: string;
@@ -100,6 +128,15 @@ class ReportFormViewModel extends Accessor {
   incidentId = "1=1";
 
   @property()
+  incidentLayer: FeatureLayer;
+
+  @property()
+  incidentFeatures: FeatureSet;
+
+  @property()
+  incidentGraphics: Graphic[] = [];
+
+  @property()
   mapId: string;
 
   @property()
@@ -138,7 +175,7 @@ class ReportFormViewModel extends Accessor {
     for (const [key, value] of formData.entries()) {
       formValues.push({
         field: key,
-        value: value as string,
+        value: value as string
       });
     }
 
@@ -146,8 +183,6 @@ class ReportFormViewModel extends Accessor {
     const reportFeatureMessage = this._makeReportMessage(formValues);
 
     try {
-      //const token = this.appModel.userCredential.token;
-      //return sendMissionMessage(this.missionId, token, JSON.stringify(reportFeatureMessage));
       await this.postMissionMessage(reportFeatureMessage);
       this.renderState = "success";
     } catch (e) {
@@ -155,73 +190,53 @@ class ReportFormViewModel extends Accessor {
     }
   };
 
-  public postMissionMessage(reportMessage: ReportMessage): Promise<any> {
+  public postMissionMessage(reportMessage: ReportMessage): Promise<boolean> {
     const token = this.appModel.userCredential.token;
     try {
-      return sendMissionMessage(this.missionId, token, JSON.stringify(reportMessage));
+      return sendMissionMessage(
+        this.missionId,
+        token,
+        JSON.stringify(reportMessage)
+      );
     } catch (err) {
       console.log("err in post ::", err);
     }
   }
 
-  public fetchIncidentDetails = async (incidentId: string) => {
-    const layerItem: PortalItem = new PortalItem({
-      id: this._appConfig.incidentLyrId,
+  public makeIncidentReport = async (incidentId: string): Promise<boolean> => {
+    if (!incidentId) {
+      return;
+    }
+
+    // get selected incident feature info in FeatureSet
+    const incidentFeature: Graphic = this.incidentGraphics.find((incident) => {
+      return incident.attributes.incidentid === incidentId;
     });
 
-    await layerItem.load();
+    // set incident location
+    this.reportLoc = incidentFeature.geometry as Point;
 
-    const incidentLayer: FeatureLayer = new FeatureLayer({
-      url: layerItem.url,
-      outFields: ["*"],
-      //definitionExpression: `incidentid = ${incidentId}`,
-    });
+    // create mission report json
+    const rptMessage: ReportMessage = this._makeIncidentMessage(
+      incidentFeature.attributes
+    );
 
-    await incidentLayer.load();
-
-    incidentLayer
-      .queryFeatures({
-        returnGeometry: true,
-        where: `incidentid='${this.incidentId}'`,
-        spatialRelationship: "intersects",
-        outFields: ["*"],
-        outSpatialReference: { wkid: 4326 },
-        orderByFields: [incidentLayer.objectIdField],
-        maxAllowableOffset: 0,
-        cacheHint: true,
-      })
-      .then((features) => {
-        for (const feature of features.features) {
-          if (feature.attributes) {
-            this.reportLoc = feature.geometry as Point;
-            return feature.attributes;
-          }
-        }
-      })
-      .then((attributes) => {
-        const rptMessage: ReportMessage = this._makeIncidentMessage(attributes);
-        this.postMissionMessage(rptMessage).then((result) => {
-          if (result) {
-            this.renderState = "success";
-          }
-        });
-      })
-      .catch((err) => {
-        console.log("error received ::", err);
-      });
+    return await this.postMissionMessage(rptMessage);
   };
 
   //-------------------------------------------------------------------
   //  Private methods
   //-------------------------------------------------------------------
-  private _makeReportMessage = (formValues: ReportFormValue[]): ReportMessage => {
+  private _makeReportMessage = (
+    formValues: ReportFormValue[]
+  ): ReportMessage => {
     const attr = {
       report_type: this.reportType,
       report_item_id: this.reportItemId,
       created_user: this.appModel.portal.user.username,
       mission_id: this.missionId,
       stale_time: REPORT_STALE_TIME,
-      created_data: new Date().getTime(),
+      created_data: new Date().getTime()
     };
 
     formValues.forEach((value) => {
@@ -243,15 +258,18 @@ class ReportFormViewModel extends Accessor {
           geometry: {
             spatialReference: { wkid: 4326 },
             x: this.reportLoc.x,
-            y: this.reportLoc.y,
-          },
-        },
-      },
+            y: this.reportLoc.y
+          }
+        }
+      }
     };
   };
 
-  private _makeIncidentMessage = (incidentFeature: IncidentFeature): ReportMessage => {
-    const { incidentname, incidentdescription, incidentsource, incidenttype } = incidentFeature;
+  private _makeIncidentMessage = (
+    incidentFeature: IncidentFeature
+  ): ReportMessage => {
+    const { incidentname, incidentdescription, incidentsource, incidenttype } =
+      incidentFeature;
     const attr = {
       report_type: this.reportType,
       report_item_id: this.reportItemId,
@@ -262,7 +280,7 @@ class ReportFormViewModel extends Accessor {
       single_line_text_y8ukazdlrbn: incidentname,
       single_line_text_jxyk0mwycr: incidenttype,
       single_line_text_tg2621vtbrr: incidentdescription,
-      single_line_text_9q2n4rcmvzh: incidentsource,
+      single_line_text_9q2n4rcmvzh: incidentsource
     };
 
     return {
@@ -280,10 +298,10 @@ class ReportFormViewModel extends Accessor {
           geometry: {
             spatialReference: { wkid: 4326 },
             x: this.reportLoc.x,
-            y: this.reportLoc.y,
-          },
-        },
-      },
+            y: this.reportLoc.y
+          }
+        }
+      }
     };
   };
 
@@ -301,14 +319,38 @@ class ReportFormViewModel extends Accessor {
     this.mapId = this.activeMissionInfo.mapIds[0];
 
     const reportService: FeatureLayer = new FeatureLayer({
-      url: this.reportUrl,
+      url: this.reportUrl
     });
     await reportService.load();
 
     if (this.reportType === appConfig.incidentReportName) {
+      const layerItem: PortalItem = new PortalItem({
+        id: this._appConfig.incidentLyrId
+      });
+
+      await layerItem.load();
+
+      this.incidentLayer = new FeatureLayer({
+        url: layerItem.url,
+        outFields: ["*"]
+      });
+
+      this.incidentFeatures = await this.incidentLayer.queryFeatures({
+        returnGeometry: true,
+        where: "1=1",
+        spatialRelationship: "intersects",
+        outFields: ["*"],
+        outSpatialReference: { wkid: 4326 },
+        orderByFields: [this.incidentLayer.objectIdField],
+        maxAllowableOffset: 0,
+        cacheHint: true
+      });
+      this.incidentGraphics = this.incidentFeatures.features;
       this.renderState = "incident";
     } else {
-      const isSupportedReportForm = this._validateReportQuestions(this.activeMissionReportFormData.questions);
+      const isSupportedReportForm = this._validateReportQuestions(
+        this.activeMissionReportFormData.questions
+      );
 
       if (isSupportedReportForm) {
         this.renderState = "supported";
@@ -320,7 +362,9 @@ class ReportFormViewModel extends Accessor {
     this.ready = true;
   };
 
-  private _validateReportQuestions = (questions: MissionReportQuestion[]): boolean => {
+  private _validateReportQuestions = (
+    questions: MissionReportQuestion[]
+  ): boolean => {
     let isSupported = true;
 
     for (const question of questions) {

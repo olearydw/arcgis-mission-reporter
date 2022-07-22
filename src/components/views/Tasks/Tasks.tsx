@@ -1,10 +1,13 @@
-import { subclass, property } from "@arcgis/core/core/accessorSupport/decorators";
+import {
+  subclass,
+  property
+} from "@arcgis/core/core/accessorSupport/decorators";
 import { tsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
 
 // References the CSS class name set in style.css
 const CSS = {
-  tasksContainer: "tasks-container",
+  tasksContainer: "tasks-container"
 };
 
 type TasksProperties = {

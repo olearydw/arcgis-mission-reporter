@@ -2,22 +2,37 @@ import { tsx } from "@arcgis/core/widgets/support/widget";
 import { setRoute } from "../../../../router/router";
 
 const CSS = {
-  navContainer: "navbar-container",
+  navContainer: "navbar-container"
 };
 
 export const makeNavbar = () => {
   return (
     <div class={CSS.navContainer}>
       <calcite-action-bar>
-        <calcite-action text="Missions" icon="home" data-action={"/missions"} onclick={_handleClick}></calcite-action>
+        <calcite-action
+          text="Missions"
+          icon="home"
+          data-action={"/missions"}
+          onclick={_handleClick}
+        ></calcite-action>
         <calcite-action
           text="Reports"
           icon="file-report"
           data-action={"/reports"}
           onclick={_handleClick}
         ></calcite-action>
-        <calcite-action text="Tasks" icon="list" data-action={"/tasks"} onclick={_handleClick}></calcite-action>
-        <calcite-action text="Webmap" icon="map" data-action={"/map"} onclick={_handleClick}></calcite-action>
+        <calcite-action
+          text="Tasks"
+          icon="list"
+          data-action={"/tasks"}
+          onclick={_handleClick}
+        ></calcite-action>
+        <calcite-action
+          text="Webmap"
+          icon="map"
+          data-action={"/map"}
+          onclick={_handleClick}
+        ></calcite-action>
       </calcite-action-bar>
     </div>
   );

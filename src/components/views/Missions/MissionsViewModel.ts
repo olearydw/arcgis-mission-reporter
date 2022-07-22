@@ -1,11 +1,23 @@
-import { property, subclass } from "@arcgis/core/core/accessorSupport/decorators";
+import {
+  property,
+  subclass
+} from "@arcgis/core/core/accessorSupport/decorators";
 import Accessor from "@arcgis/core/core/Accessor";
 import PortalUser from "@arcgis/core/portal/PortalUser";
-import { MissionServiceBase, MissionServiceInfo } from "../../../typings/mission";
+import {
+  MissionServiceBase,
+  MissionServiceInfo
+} from "../../../typings/mission";
 import { FederatedServer } from "../../../typings/portal";
-import { getActiveMissionInfo, getAllMissions } from "../../../mediators/MissionMediator";
+import {
+  getActiveMissionInfo,
+  getAllMissions
+} from "../../../mediators/MissionMediator";
 import AppModel from "../../../model/AppModel";
-import { getDefaultPortalItemThumbnail, makeItemThumbnailUrl } from "../../../utilities/urlUtils";
+import {
+  getDefaultPortalItemThumbnail,
+  makeItemThumbnailUrl
+} from "../../../utilities/urlUtils";
 
 // import { makeItemThumbnailUrl } from "../../../utilities/urlUtils.ts";
 
@@ -52,7 +64,9 @@ class MissionsViewModel extends Accessor {
     if (!tnPartial) {
       tnUrl = getDefaultPortalItemThumbnail(this.appModel.portal.url);
     } else {
-      const contentUrl = tnPartial ? this.appModel.portal.restUrl : this.appModel.portal.url;
+      const contentUrl = tnPartial
+        ? this.appModel.portal.restUrl
+        : this.appModel.portal.url;
       const baseUrl = makeItemThumbnailUrl(contentUrl, id, tnPartial);
       const token = this.appModel.userCredential.token;
       tnUrl = `${baseUrl}?token=${token}`;

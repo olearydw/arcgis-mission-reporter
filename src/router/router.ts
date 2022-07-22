@@ -3,7 +3,7 @@ import App from "../components/views/App/AppView";
 
 const router = new Navigo("/", {
   hash: true,
-  noMatchWarning: true,
+  noMatchWarning: true
 });
 
 // Default route of the app
